@@ -11,6 +11,8 @@ import { Avatar, AvatarImage } from "./ui/avatar"
 import Link from "next/link"
 import { Button } from "./ui/button"
 import Image from "next/image"
+import { Dialog, DialogTrigger } from "./ui/dialog"
+import LoginDialog from "./login-dialog"
 
 const SidebarSheet = () => {
   return (
@@ -34,9 +36,14 @@ const SidebarSheet = () => {
           <h2 className="font-bold text-foreground">
             Faça login para continuar!
           </h2>
-          <Button size="icon">
-            <LogInIcon size={18} />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="icon">
+                <LogInIcon size={18} />
+              </Button>
+            </DialogTrigger>
+            <LoginDialog />
+          </Dialog>
         </SheetDescription>
       </SheetHeader>
       {/* MENU */}

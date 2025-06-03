@@ -9,7 +9,6 @@ import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
 const Home = async () => {
   const services = await db.service.findMany({})
-  console.log({ services })
 
   return (
     <div>
