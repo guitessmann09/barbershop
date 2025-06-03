@@ -5,8 +5,12 @@ import Image from "next/image"
 import { SearchIcon } from "lucide-react"
 import quickSearchOptions from "./_constants/search"
 import BookingItem from "@/components/booking-item"
+import { db } from "@/lib/prisma"
+import ServiceItem from "@/components/service-item"
+const Home = async () => {
+  const services = await db.service.findMany({})
+  console.log({ services })
 
-const Home = () => {
   return (
     <div>
       <Header />
@@ -47,6 +51,16 @@ const Home = () => {
 
         {/* AGENDAMENTOS */}
         <BookingItem />
+
+        {/* SERVICOS */}
+        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
+          Serviços
+        </h2>
+        <div className="space-y-3">
+          {services.map((service) => (
+            <ServiceItem key={service.id} service={service} />
+          ))}
+        </div>
       </div>
     </div>
   )
