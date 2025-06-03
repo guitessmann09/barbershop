@@ -10,7 +10,7 @@
     --primary: oklch(75% 0.14 80);
     --primary-foreground: oklch(20% 0 0);
 
-    --secondary: oklch(35% 0.12 50);
+    --secondary: oklch(30% 0.02 270);
     --secondary-foreground: oklch(95% 0.1 85);
 
     --muted: oklch(25% 0 0);
@@ -22,13 +22,12 @@
     --destructive: oklch(60% 0.25 27);
     --destructive-foreground: oklch(100% 0 0);
 
-    --border: oklch(35% 0.12 50);
+    --border: oklch(30% 0.02 270);
     --input: oklch(25% 0 0);
     --ring: oklch(75% 0.14 80);
 
     --radius: 0.5rem;
 
-    --border: #26272b;
   }
 }
 

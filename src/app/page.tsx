@@ -20,7 +20,38 @@ const Home = () => {
             <SearchIcon />
           </Button>
         </div>
-        <div className="relative mt-6 h-[150px] w-full">
+
+        {/* QUICK SEARCH */}
+        <div className="my-6 flex items-center gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          <Button className="gap-2" variant="secondary">
+            <Image src="/cabelo.svg" alt="Cabelo" width={16} height={16} />
+            <p>Cabelo</p>
+          </Button>
+          <Button className="gap-2" variant="secondary">
+            <Image src="/barba.svg" alt="Barba" width={16} height={16} />
+            <p>Barba</p>
+          </Button>
+          <Button className="gap-2" variant="secondary">
+            <Image
+              src="/acabamento.svg"
+              alt="Acabamento"
+              width={16}
+              height={16}
+            />
+            <p>Acabamento</p>
+          </Button>
+          <Button className="gap-2" variant="secondary">
+            <Image
+              src="/sobrancelha.png"
+              alt="Sobrancelha"
+              width={16}
+              height={16}
+            />
+            <p>Sobrancelha</p>
+          </Button>
+        </div>
+
+        <div className="relative h-[150px] w-full">
           <Image
             src="/dandys-den-banner-01.png"
             alt="Dandy's Den"
@@ -28,11 +59,12 @@ const Home = () => {
             className="rounded-xl object-cover"
           />
         </div>
+
         {/* AGENDAMENTOS */}
         <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
           Agendamentos
         </h2>
-        <Card className="mt-3 border-border bg-muted">
+        <Card className="mt-3 bg-muted">
           <CardContent className="flex justify-between p-0">
             {/* ESQUERDA */}
             <div className="flex flex-col gap-2 py-5 pl-5">
@@ -47,7 +79,7 @@ const Home = () => {
             </div>
 
             {/* DIREITA */}
-            <div className="flex flex-col items-center justify-center border-l-2 border-solid border-border px-5">
+            <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
               <p className="text-sm">Junho</p>
               <p className="text-2xl">06</p>
               <p className="text-sm">17:00</p>
