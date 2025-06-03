@@ -27,12 +27,14 @@
     --ring: oklch(75% 0.14 80);
 
     --radius: 0.5rem;
+
+    --border: #26272b;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border antialiased;
   }
   body {
     @apply bg-background text-foreground;
