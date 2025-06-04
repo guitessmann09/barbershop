@@ -8,7 +8,7 @@ const BookingItem = () => {
       <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
         Agendamentos
       </h2>
-      <Card className="mt-3 bg-muted">
+      <Card className="mt-3">
         <CardContent className="flex justify-between p-0">
           {/* ESQUERDA */}
           <div className="flex flex-col gap-2 py-5 pl-5">
