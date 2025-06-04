@@ -58,6 +58,40 @@ async function seedDataBase() {
         },
       })
     }
+    const barbers = [
+      {
+        name: "Guilherme",
+        email: "guilherme@gmail.com",
+        password: "123456",
+        imageURL:
+          "https://images.pexels.com/photos/2076930/pexels-photo-2076930.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      },
+      {
+        name: "Junior",
+        email: "junior@gmail.com",
+        password: "123456",
+        imageURL:
+          "https://images.pexels.com/photos/2076930/pexels-photo-2076930.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      },
+      {
+        name: "João",
+        email: "joao@gmail.com",
+        password: "123456",
+        imageURL:
+          "https://images.pexels.com/photos/2076930/pexels-photo-2076930.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      },
+    ]
+    for (const barber of barbers) {
+      await prisma.barber.create({
+        data: {
+          name: barber.name,
+          email: barber.email,
+          password: barber.password,
+          imageURL: barber.imageURL,
+        },
+      })
+    }
+
     await prisma.$disconnect()
   } catch (error) {
     console.error("Erro ao popular o banco de dados:", error)

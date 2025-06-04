@@ -7,6 +7,7 @@ import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
 const Home = async () => {
   const services = await db.service.findMany({})
+  const barbers = await db.barber.findMany({})
 
   return (
     <div>
@@ -49,7 +50,7 @@ const Home = async () => {
         </h2>
         <div className="space-y-3">
           {services.map((service) => (
-            <ServiceItem key={service.id} service={service} />
+            <ServiceItem key={service.id} service={service} barbers={barbers} />
           ))}
         </div>
       </div>

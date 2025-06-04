@@ -1,6 +1,6 @@
 "use client"
 
-import { Service } from "@prisma/client"
+import { Service, Barber } from "@prisma/client"
 import Image from "next/image"
 import { Card, CardContent } from "./ui/card"
 import { Button } from "./ui/button"
@@ -15,9 +15,17 @@ import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useState } from "react"
 import { format } from "date-fns"
-
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel"
+import { Toggle } from "./ui/toggle"
 interface ServiceItemProps {
   service: Service
+  barbers: Barber[]
 }
 
 const TIME_LIST = [
@@ -47,9 +55,12 @@ const TIME_LIST = [
   "20:00",
 ]
 
-const ServiceItem = ({ service }: ServiceItemProps) => {
+const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
+    undefined,
+  )
+  const [selectedBarber, setSelectedBarber] = useState<Barber | undefined>(
     undefined,
   )
   const handleSelectDay = (day: Date | undefined) => {
@@ -58,6 +69,10 @@ const ServiceItem = ({ service }: ServiceItemProps) => {
 
   const handleSelectTime = (time: string) => {
     setSelectedTime(time)
+  }
+
+  const handleSelectBarber = (barber: Barber) => {
+    setSelectedBarber(barber)
   }
 
   return (
@@ -136,9 +151,56 @@ const ServiceItem = ({ service }: ServiceItemProps) => {
                   </div>
                 )}
 
-                {/* TODO: Adicionar seleção de profissional */}
-
                 {selectedTime && selectedDay && (
+                  <div className="flex flex-col items-start justify-center border-b border-solid p-5">
+                    <h2 className="mb-2 text-sm font-bold">
+                      Selecione um profissional:
+                    </h2>
+                    <div className="flex w-full items-center justify-center">
+                      <Carousel className="w-[80%]">
+                        <CarouselContent>
+                          {Array.from({ length: barbers.length }).map(
+                            (_, index) => (
+                              <CarouselItem key={barbers[index].id}>
+                                <Toggle
+                                  pressed={
+                                    selectedBarber?.name === barbers[index].name
+                                  }
+                                  onPressedChange={() =>
+                                    setSelectedBarber(barbers[index])
+                                  }
+                                  className={`flex w-full items-center gap-6 border p-6 transition hover:text-white ${
+                                    selectedBarber?.id === barbers[index].id
+                                      ? "flex w-full items-center gap-6 border p-6 transition hover:text-white"
+                                      : "border-transparent hover:bg-secondary"
+                                  } `}
+                                  onClick={() =>
+                                    handleSelectBarber(barbers[index])
+                                  }
+                                >
+                                  <Image
+                                    src="https://github.com/shadcn.png"
+                                    alt={barbers[index].name}
+                                    width={38}
+                                    height={38}
+                                    className="rounded-full"
+                                  />
+                                  <p className="text-lg font-semibold">
+                                    {barbers[index].name}
+                                  </p>
+                                </Toggle>
+                              </CarouselItem>
+                            ),
+                          )}
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                      </Carousel>
+                    </div>
+                  </div>
+                )}
+
+                {selectedTime && selectedDay && selectedBarber && (
                   <div className="p-5">
                     <Card>
                       <CardContent className="space-y-3 p-4">
@@ -171,7 +233,7 @@ const ServiceItem = ({ service }: ServiceItemProps) => {
                           <h2 className="text-sm text-muted-foreground">
                             Profissional
                           </h2>
-                          <p className="text-sm">Juninho</p>
+                          <p className="text-sm">{selectedBarber?.name}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -179,7 +241,11 @@ const ServiceItem = ({ service }: ServiceItemProps) => {
                 )}
                 <SheetFooter className="mt-5 px-5">
                   <SheetClose asChild>
-                    <Button disabled={!selectedTime || !selectedDay}>
+                    <Button
+                      disabled={
+                        !selectedTime || !selectedDay || !selectedBarber
+                      }
+                    >
                       Confirmar
                     </Button>
                   </SheetClose>
