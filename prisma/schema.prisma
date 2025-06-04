@@ -76,6 +76,42 @@ model Booking {
   serviceId String
   service   Service  @relation(fields: [serviceId], references: [id])
   date      DateTime
+  barberId  Int
+  barber    Barber   @relation(fields: [barberId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Barber {
+  id             Int            @id @default(autoincrement())
+  name           String
+  email          String         @unique
+  imageURL       String?
+  password       String
+  availabilities Availability[]
+  blockedSlots   BlockedSlot[]
+  bookings       Booking[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Availability {
+  id           Int      @id @default(autoincrement())
+  barber       Barber   @relation(fields: [barberId], references: [id])
+  barberId     Int
+  weekday      Int
+  startTime    String
+  endTime      String
+  slotDuration Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model BlockedSlot {
+  id        Int      @id @default(autoincrement())
+  barber    Barber   @relation(fields: [barberId], references: [id])
+  barberId  Int
+  date      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
