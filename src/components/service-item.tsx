@@ -14,7 +14,7 @@ import {
 import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useState } from "react"
-import { format } from "date-fns"
+import { format, set } from "date-fns"
 import {
   Carousel,
   CarouselContent,
@@ -23,9 +23,13 @@ import {
   CarouselPrevious,
 } from "./ui/carousel"
 import { Toggle } from "./ui/toggle"
+import { createBooking } from "@/app/_actions/create-bookings"
+import { useSession } from "next-auth/react"
+import { toast } from "sonner"
+
 interface ServiceItemProps {
   service: Service
-  barbers: Barber[]
+  barbers: Pick<Barber, "id" | "name">[]
 }
 
 const TIME_LIST = [
@@ -56,6 +60,7 @@ const TIME_LIST = [
 ]
 
 const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
+  const { data } = useSession()
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
@@ -73,6 +78,31 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
 
   const handleSelectBarber = (barber: Barber) => {
     setSelectedBarber(barber)
+  }
+
+  const handleCreateBooking = async () => {
+    if (!selectedDay || !selectedTime || !selectedBarber) return
+
+    try {
+      const hour = Number(selectedTime.split(":")[0])
+      const minute = Number(selectedTime.split(":")[1])
+      const newDate = set(selectedDay, {
+        hours: hour,
+        minutes: minute,
+      })
+
+      const booking = await createBooking({
+        serviceId: service.id,
+        userId: (data?.user as any).id,
+        barberId: selectedBarber?.id,
+        date: newDate,
+      })
+
+      toast.success("Agendamento feito com sucesso")
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao fazer o agendamento")
+    }
   }
 
   return (
@@ -102,7 +132,7 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                   Agendar
                 </Button>
               </SheetTrigger>
-              <SheetContent className="h-full px-0">
+              <SheetContent className="h-full w-[85%] px-0">
                 <div className="border-b border-solid py-5">
                   <Calendar
                     mode="single"
@@ -167,7 +197,7 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                                     selectedBarber?.name === barbers[index].name
                                   }
                                   onPressedChange={() =>
-                                    setSelectedBarber(barbers[index])
+                                    setSelectedBarber(barbers[index] as Barber)
                                   }
                                   className={`flex w-full items-center gap-6 border p-6 transition hover:text-white ${
                                     selectedBarber?.id === barbers[index].id
@@ -175,7 +205,7 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                                       : "border-transparent hover:bg-secondary"
                                   } `}
                                   onClick={() =>
-                                    handleSelectBarber(barbers[index])
+                                    handleSelectBarber(barbers[index] as Barber)
                                   }
                                 >
                                   <Image
@@ -245,6 +275,8 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                       disabled={
                         !selectedTime || !selectedDay || !selectedBarber
                       }
+                      type="submit"
+                      onClick={handleCreateBooking}
                     >
                       Confirmar
                     </Button>

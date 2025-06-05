@@ -1,6 +1,12 @@
 "use client"
 
-import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon } from "lucide-react"
+import {
+  CalendarIcon,
+  HomeIcon,
+  LogInIcon,
+  LogOutIcon,
+  UserIcon,
+} from "lucide-react"
 import {
   SheetContent,
   SheetHeader,
@@ -15,7 +21,7 @@ import Image from "next/image"
 import { Dialog, DialogTrigger } from "./ui/dialog"
 import LoginDialog from "./login-dialog"
 import { useSession } from "next-auth/react"
-import { Avatar, AvatarImage } from "./ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
 import LogoutDialog from "./logout-dialog"
 
 const SidebarSheet = () => {
@@ -29,7 +35,10 @@ const SidebarSheet = () => {
         {data?.user ? (
           <SheetDescription className="flex items-center gap-3 pt-6">
             <Avatar className="h-12 w-12 border-2 border-primary">
-              <AvatarImage src={data?.user?.image || ""} />
+              <AvatarImage src={data?.user?.image ?? undefined} />
+              <AvatarFallback>
+                <UserIcon />
+              </AvatarFallback>
             </Avatar>
             <div>
               <p className="text-base font-bold text-foreground">

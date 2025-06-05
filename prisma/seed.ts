@@ -82,7 +82,7 @@ async function seedDataBase() {
       },
     ]
     for (const barber of barbers) {
-      await prisma.barber.create({
+      const createdBarber = await prisma.barber.create({
         data: {
           name: barber.name,
           email: barber.email,
@@ -90,6 +90,18 @@ async function seedDataBase() {
           imageURL: barber.imageURL,
         },
       })
+
+      for (let weekday = 1; weekday <= 5; weekday++) {
+        await prisma.availability.create({
+          data: {
+            barberId: createdBarber.id,
+            weekday,
+            startTime: "08:00",
+            endTime: "18:00",
+            slotDuration: 45,
+          },
+        })
+      }
     }
 
     await prisma.$disconnect()
