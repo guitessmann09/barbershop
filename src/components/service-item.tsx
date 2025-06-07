@@ -133,40 +133,42 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                 </Button>
               </SheetTrigger>
               <SheetContent className="h-full w-[85%] px-0">
-                <div className="border-b border-solid py-5">
-                  <Calendar
-                    mode="single"
-                    locale={ptBR}
-                    selected={selectedDay}
-                    onSelect={handleSelectDay}
-                    className="rounded-lg"
-                    styles={{
-                      head_cell: {
-                        width: "100%",
-                        textTransform: "capitalize",
-                      },
-                      cell: {
-                        width: "100%",
-                      },
-                      button: {
-                        width: "100%",
-                      },
-                      nav_button_previous: {
-                        width: "32px",
-                        height: "32px",
-                      },
-                      nav_button_next: {
-                        width: "32px",
-                        height: "32px",
-                      },
-                      caption: {
-                        textTransform: "capitalize",
-                      },
-                    }}
-                  />
-                </div>
+                {selectedBarber && (
+                  <div className="border-b border-solid py-5">
+                    <Calendar
+                      mode="single"
+                      locale={ptBR}
+                      selected={selectedDay}
+                      onSelect={handleSelectDay}
+                      className="rounded-lg"
+                      styles={{
+                        head_cell: {
+                          width: "100%",
+                          textTransform: "capitalize",
+                        },
+                        cell: {
+                          width: "100%",
+                        },
+                        button: {
+                          width: "100%",
+                        },
+                        nav_button_previous: {
+                          width: "32px",
+                          height: "32px",
+                        },
+                        nav_button_next: {
+                          width: "32px",
+                          height: "32px",
+                        },
+                        caption: {
+                          textTransform: "capitalize",
+                        },
+                      }}
+                    />
+                  </div>
+                )}
 
-                {selectedDay && (
+                {selectedBarber && selectedDay && (
                   <div className="flex gap-3 overflow-x-scroll border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
                     {TIME_LIST.map((time) => (
                       <Button
@@ -181,56 +183,56 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                   </div>
                 )}
 
-                {selectedTime && selectedDay && (
-                  <div className="flex flex-col items-start justify-center border-b border-solid p-5">
-                    <h2 className="mb-2 text-sm font-bold">
-                      Selecione um profissional:
-                    </h2>
-                    <div className="flex w-full items-center justify-center">
-                      <Carousel className="w-[80%]">
-                        <CarouselContent>
-                          {Array.from({ length: barbers.length }).map(
-                            (_, index) => (
-                              <CarouselItem key={barbers[index].id}>
-                                <Toggle
-                                  pressed={
-                                    selectedBarber?.name === barbers[index].name
-                                  }
-                                  onPressedChange={() =>
-                                    setSelectedBarber(barbers[index] as Barber)
-                                  }
-                                  className={`flex w-full items-center gap-6 border p-6 transition hover:text-white ${
-                                    selectedBarber?.id === barbers[index].id
-                                      ? "flex w-full items-center gap-6 border p-6 transition hover:text-white"
-                                      : "border-transparent hover:bg-secondary"
-                                  } `}
-                                  onClick={() =>
-                                    handleSelectBarber(barbers[index] as Barber)
-                                  }
-                                >
-                                  <Image
-                                    src="https://github.com/shadcn.png"
-                                    alt={barbers[index].name}
-                                    width={38}
-                                    height={38}
-                                    className="rounded-full"
-                                  />
-                                  <p className="text-lg font-semibold">
-                                    {barbers[index].name}
-                                  </p>
-                                </Toggle>
-                              </CarouselItem>
-                            ),
-                          )}
-                        </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
-                      </Carousel>
-                    </div>
+                <div className="flex flex-col items-start justify-center border-b border-solid p-5">
+                  <h2 className="mb-2 text-sm font-bold">
+                    Selecione um profissional:
+                  </h2>
+                  <div className="flex w-full items-center justify-center">
+                    <Carousel className="w-[80%]">
+                      <CarouselContent>
+                        {Array.from({ length: barbers.length }).map(
+                          (_, index) => (
+                            <CarouselItem key={barbers[index].id}>
+                              <Toggle
+                                pressed={
+                                  selectedBarber?.name === barbers[index].name
+                                }
+                                onPressedChange={() =>
+                                  setSelectedBarber(barbers[index] as Barber)
+                                }
+                                className={`flex w-full items-center gap-6 border p-6 transition hover:text-white ${
+                                  selectedBarber?.id === barbers[index].id
+                                    ? "flex w-full items-center gap-6 border p-6 transition hover:text-white"
+                                    : "border-transparent hover:bg-secondary"
+                                } `}
+                                onClick={() => {
+                                  handleSelectBarber(barbers[index] as Barber)
+                                  setSelectedTime(undefined)
+                                  setSelectedDay(undefined)
+                                }}
+                              >
+                                <Image
+                                  src="https://github.com/shadcn.png"
+                                  alt={barbers[index].name}
+                                  width={38}
+                                  height={38}
+                                  className="rounded-full"
+                                />
+                                <p className="text-lg font-semibold">
+                                  {barbers[index].name}
+                                </p>
+                              </Toggle>
+                            </CarouselItem>
+                          ),
+                        )}
+                      </CarouselContent>
+                      <CarouselPrevious />
+                      <CarouselNext />
+                    </Carousel>
                   </div>
-                )}
+                </div>
 
-                {selectedTime && selectedDay && selectedBarber && (
+                {selectedBarber && selectedDay && selectedTime && (
                   <div className="p-5">
                     <Card>
                       <CardContent className="space-y-3 p-4">
