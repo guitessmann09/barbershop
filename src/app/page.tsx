@@ -7,7 +7,15 @@ import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
 const Home = async () => {
   const services = await db.service.findMany({})
-  const barbers = await db.barber.findMany({})
+  const barbers = await db.barber.findMany({
+    select: {
+      id: true,
+      name: true,
+      bookings: {
+        select: { date: true },
+      },
+    },
+  })
 
   return (
     <div>
