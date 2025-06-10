@@ -13,6 +13,9 @@ import { useRouter } from "next/navigation"
 import { BookingForm } from "./booking-form"
 import { ServiceItemProps, BookingFormData } from "@/types/barbershop"
 import { set } from "date-fns"
+import LoginDialog from "./login-dialog"
+import { Dialog, DialogTrigger } from "./ui/dialog"
+import { LogInIcon } from "lucide-react"
 
 const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
   const router = useRouter()
@@ -22,6 +25,17 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
     selectedTime: undefined,
     selectedBarber: undefined,
   })
+
+  const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false)
+
+  const handleBookingSheetOpenChange = () => {
+    setFormData({
+      selectedDay: undefined,
+      selectedTime: undefined,
+      selectedBarber: undefined,
+    })
+    setBookingSheetIsOpen(false)
+  }
 
   const handleCreateBooking = async () => {
     const { selectedDay, selectedTime, selectedBarber } = formData
@@ -40,12 +54,6 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
         userId: (data?.user as any).id,
         barberId: selectedBarber?.id,
         date: newDate,
-      })
-
-      setFormData({
-        selectedDay: undefined,
-        selectedTime: undefined,
-        selectedBarber: undefined,
       })
 
       router.refresh()
@@ -77,28 +85,58 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                 currency: "BRL",
               }).format(Number(service.price))}
             </p>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button size="sm" variant="outline">
-                  Agendar
-                </Button>
-              </SheetTrigger>
+            <Sheet
+              open={bookingSheetIsOpen}
+              onOpenChange={handleBookingSheetOpenChange}
+            >
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setBookingSheetIsOpen(true)}
+              >
+                Agendar
+              </Button>
               <SheetContent className="h-full w-[85%] px-0">
-                <BookingForm
-                  service={service}
-                  barbers={barbers}
-                  formData={formData}
-                  onDaySelect={(date) =>
-                    setFormData((prev) => ({ ...prev, selectedDay: date }))
-                  }
-                  onTimeSelect={(time) =>
-                    setFormData((prev) => ({ ...prev, selectedTime: time }))
-                  }
-                  onBarberSelect={(barber) =>
-                    setFormData((prev) => ({ ...prev, selectedBarber: barber }))
-                  }
-                  onSubmit={handleCreateBooking}
-                />
+                {data?.user ? (
+                  <>
+                    <BookingForm
+                      service={service}
+                      barbers={barbers}
+                      formData={formData}
+                      onDaySelect={(date) =>
+                        setFormData((prev) => ({ ...prev, selectedDay: date }))
+                      }
+                      onTimeSelect={(time) =>
+                        setFormData((prev) => ({ ...prev, selectedTime: time }))
+                      }
+                      onBarberSelect={(barber) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          selectedBarber: barber,
+                        }))
+                      }
+                      onSubmit={handleCreateBooking}
+                    />
+                    <div className="mt-5 px-5">
+                      <Button
+                        className="w-full"
+                        disabled={
+                          !formData.selectedTime ||
+                          !formData.selectedDay ||
+                          !formData.selectedBarber
+                        }
+                        onClick={() => {
+                          handleCreateBooking()
+                          handleBookingSheetOpenChange()
+                        }}
+                      >
+                        Confirmar
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <LoginDialog />
+                )}
               </SheetContent>
             </Sheet>
           </div>

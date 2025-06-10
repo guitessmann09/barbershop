@@ -2,7 +2,7 @@
 
 import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
-import { format, set, isEqual } from "date-fns"
+import { format, set, isEqual, addDays, isSameDay, isAfter } from "date-fns"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
 import { Toggle } from "./ui/toggle"
@@ -77,6 +77,29 @@ export function BookingForm({
     })
   }, [barbers, selectedDay, selectedTime])
 
+  const availableTimes = useMemo(() => {
+    if (!selectedDay) return TIME_LIST
+
+    const now = new Date()
+
+    // Se o dia selecionado for hoje, filtra os horários que já passaram
+    if (isSameDay(selectedDay, now)) {
+      return TIME_LIST.filter((time) => {
+        const [hour, minute] = time.split(":").map(Number)
+        const timeToCheck = set(now, {
+          hours: hour,
+          minutes: minute,
+          seconds: 0,
+          milliseconds: 0,
+        })
+        return isAfter(timeToCheck, now)
+      })
+    }
+
+    // Se for um dia futuro, retorna todos os horários
+    return TIME_LIST
+  }, [selectedDay])
+
   return (
     <>
       <div className="border-b border-solid py-5">
@@ -85,7 +108,12 @@ export function BookingForm({
           locale={ptBR}
           selected={selectedDay}
           onSelect={onDaySelect}
+          fromDate={new Date()}
           className="rounded-lg"
+          onDayClick={(date) => {
+            onTimeSelect(undefined as any)
+            onBarberSelect(undefined as any)
+          }}
           styles={{
             head_cell: {
               width: "100%",
@@ -114,16 +142,26 @@ export function BookingForm({
 
       {selectedDay && (
         <div className="flex gap-3 overflow-x-scroll border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
-          {TIME_LIST.map((time) => (
-            <Button
-              key={time}
-              variant={selectedTime === time ? "default" : "outline"}
-              className="w-full rounded-full border"
-              onClick={() => onTimeSelect(time)}
-            >
-              {time}
-            </Button>
-          ))}
+          {availableTimes.length > 0 ? (
+            availableTimes.map((time) => (
+              <Button
+                key={time}
+                variant={selectedTime === time ? "default" : "outline"}
+                className="w-full rounded-full border"
+                onClick={() => {
+                  onTimeSelect(time)
+                  onBarberSelect(undefined as any)
+                }}
+              >
+                {time}
+              </Button>
+            ))
+          ) : (
+            <p className="p-4 text-sm text-gray-500">
+              Infelizmente não temos horários disponíveis para o dia
+              selecionado.
+            </p>
+          )}
         </div>
       )}
 
@@ -198,16 +236,6 @@ export function BookingForm({
           </Card>
         </div>
       )}
-
-      <div className="mt-5 px-5">
-        <Button
-          className="w-full"
-          disabled={!selectedTime || !selectedDay || !selectedBarber}
-          onClick={onSubmit}
-        >
-          Confirmar
-        </Button>
-      </div>
     </>
   )
 }
