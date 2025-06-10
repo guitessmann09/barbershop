@@ -5,6 +5,7 @@ import quickSearchOptions from "./_constants/search"
 import BookingItem from "@/components/booking-item"
 import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
+
 const Home = async () => {
   const services = await db.service.findMany({})
   const barbers = await db.barber.findMany({
@@ -14,8 +15,10 @@ const Home = async () => {
       bookings: {
         select: { date: true },
       },
+      imageURL: true,
     },
   })
+  const bookings = await db.booking.findMany({})
 
   return (
     <div>
@@ -35,7 +38,14 @@ const Home = async () => {
         </div>
 
         {/* AGENDAMENTOS */}
-        <BookingItem />
+        <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
+          Agendamentos
+        </h2>
+        <BookingItem
+          booking={bookings[0]}
+          services={services}
+          barbers={barbers}
+        />
 
         {/* QUICK SEARCH */}
         <div className="my-6 flex items-center gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">

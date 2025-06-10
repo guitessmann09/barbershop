@@ -81,8 +81,13 @@ const SidebarSheet = () => {
           variant="ghost"
           className="flex items-center justify-start gap-2"
         >
-          <CalendarIcon size={18} />
-          <p className="text-sm font-normal">Agendamentos</p>
+          <Link
+            href="/bookings"
+            className="flex w-full items-center justify-start gap-2"
+          >
+            <CalendarIcon size={18} />
+            <p className="text-sm font-normal">Agendamentos</p>
+          </Link>
         </Button>
       </div>
       {/* SERVIÇOS */}
