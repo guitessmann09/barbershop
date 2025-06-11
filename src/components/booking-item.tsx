@@ -12,12 +12,18 @@ interface BookingItemProps {
 }
 
 const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
+  const serviceIsComplete = booking.date < new Date()
   return (
     <Card className="mt-3 min-w-[100%]">
       <CardContent className="flex justify-between p-0">
         {/* ESQUERDA */}
         <div className="flex flex-col gap-2 py-5 pl-5">
-          <Badge className="w-fit">Confirmado</Badge>
+          <Badge
+            className="w-fit"
+            variant={serviceIsComplete ? "secondary" : "default"}
+          >
+            {serviceIsComplete ? "Finalizado" : "Confirmado"}
+          </Badge>
           <h3 className="font-semibold">
             {services.find((service) => service.id === booking.serviceId)?.name}
           </h3>
