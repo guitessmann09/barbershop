@@ -4,24 +4,20 @@ import { Booking, Service, Barber } from "@prisma/client"
 import { Badge } from "./ui/badge"
 import { Card, CardContent } from "./ui/card"
 import { Avatar, AvatarImage } from "./ui/avatar"
-import { useSession } from "next-auth/react"
+
 interface BookingItemProps {
+  userId: string
   booking: Booking
   services: Service[]
   barbers: Pick<Barber, "id" | "name" | "imageURL">[]
 }
 
-const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
-  const { data } = useSession()
-
-  if (!data?.user || !booking?.id) {
-    return (
-      <div className="mt-3">
-        <p className="text-sm text-gray-500">Você ainda não tem agendamentos</p>
-      </div>
-    )
-  }
-
+const BookingItem = ({
+  userId,
+  booking,
+  services,
+  barbers,
+}: BookingItemProps) => {
   return (
     <Card className="mt-3">
       <CardContent className="flex justify-between p-0">

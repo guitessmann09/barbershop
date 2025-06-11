@@ -5,8 +5,12 @@ import quickSearchOptions from "./_constants/search"
 import BookingItem from "@/components/booking-item"
 import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
+import { authOptions } from "@/lib/auth"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 
 const Home = async () => {
+  const session = await getServerSession(authOptions)
   const services = await db.service.findMany({})
   const barbers = await db.barber.findMany({
     select: {
@@ -19,6 +23,10 @@ const Home = async () => {
     },
   })
   const bookings = await db.booking.findMany({})
+
+  const userBookings = session
+    ? bookings.filter((booking) => booking.userId === (session as any).user.id)
+    : []
 
   return (
     <div>
@@ -41,12 +49,23 @@ const Home = async () => {
         <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
           Agendamentos
         </h2>
-        <BookingItem
-          booking={bookings[0]}
-          services={services}
-          barbers={barbers}
-        />
-
+        {!session || !userBookings.length ? (
+          <div className="mt-3">
+            <p className="text-sm text-gray-500">
+              Você ainda não tem agendamentos
+            </p>
+          </div>
+        ) : (
+          userBookings.map((booking) => (
+            <BookingItem
+              userId={(session as any).user.id}
+              key={booking.id}
+              booking={booking}
+              services={services}
+              barbers={barbers}
+            />
+          ))
+        )}
         {/* QUICK SEARCH */}
         <div className="my-6 flex items-center gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {quickSearchOptions.map((option) => (

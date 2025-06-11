@@ -1,9 +1,20 @@
 import BookingItem from "@/components/booking-item"
 import Header from "@/components/header"
 import { db } from "@/lib/prisma"
+import { authOptions } from "@/lib/auth"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 
 const Bookings = async () => {
-  const bookings = await db.booking.findMany({})
+  const session = await getServerSession(authOptions)
+  if (!session?.user) {
+    redirect("/")
+  }
+  const bookings = await db.booking.findMany({
+    where: {
+      userId: (session as any).user.id,
+    },
+  })
   const services = await db.service.findMany({})
   const barbers = await db.barber.findMany({
     select: {
@@ -12,6 +23,7 @@ const Bookings = async () => {
       imageURL: true,
     },
   })
+
   return (
     <div>
       <Header />
@@ -24,6 +36,7 @@ const Bookings = async () => {
         </h2>
         {bookings.map((booking) => (
           <BookingItem
+            userId={(session as any).user.id}
             key={booking.id}
             booking={booking}
             services={services}
