@@ -95,7 +95,7 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
               >
                 Agendar
               </Button>
-              <SheetContent className="h-full w-[85%] px-0">
+              <SheetContent className="h-full w-[85%] overflow-y-auto px-0">
                 {data?.user ? (
                   <>
                     <BookingForm

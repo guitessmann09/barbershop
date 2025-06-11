@@ -6,20 +6,14 @@ import { Card, CardContent } from "./ui/card"
 import { Avatar, AvatarImage } from "./ui/avatar"
 
 interface BookingItemProps {
-  userId: string
   booking: Booking
   services: Service[]
   barbers: Pick<Barber, "id" | "name" | "imageURL">[]
 }
 
-const BookingItem = ({
-  userId,
-  booking,
-  services,
-  barbers,
-}: BookingItemProps) => {
+const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
   return (
-    <Card className="mt-3">
+    <Card className="mt-3 min-w-[100%]">
       <CardContent className="flex justify-between p-0">
         {/* ESQUERDA */}
         <div className="flex flex-col gap-2 py-5 pl-5">

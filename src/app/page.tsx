@@ -7,7 +7,6 @@ import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
 import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
-import { redirect } from "next/navigation"
 
 const Home = async () => {
   const session = await getServerSession(authOptions)
@@ -32,8 +31,16 @@ const Home = async () => {
     <div>
       <Header />
       <div className="p-5">
-        <h2 className="text-xl font-bold">Olá, Guilherme</h2>
-        <p className="text-sm text-gray-500">Segunda-feira, 2 de Junho</p>
+        <h2 className="text-xl font-bold">
+          Olá, {session?.user?.name?.split(" ")[0]}
+        </h2>
+        <p className="text-sm capitalize text-gray-500">
+          {new Date().toLocaleDateString("pt-BR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
+        </p>
 
         {/* BANNER */}
         <div className="relative mt-5 h-[150px] w-full">
@@ -56,15 +63,19 @@ const Home = async () => {
             </p>
           </div>
         ) : (
-          userBookings.map((booking) => (
-            <BookingItem
-              userId={(session as any).user.id}
-              key={booking.id}
-              booking={booking}
-              services={services}
-              barbers={barbers}
-            />
-          ))
+          <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+            {userBookings
+              .filter((booking) => booking.date > new Date())
+              .sort((a, b) => a.date.getTime() - b.date.getTime())
+              .map((booking) => (
+                <BookingItem
+                  key={booking.id}
+                  booking={booking}
+                  services={services}
+                  barbers={barbers}
+                />
+              ))}
+          </div>
         )}
         {/* QUICK SEARCH */}
         <div className="my-6 flex items-center gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
