@@ -7,6 +7,7 @@ export interface BarberWithBookings extends Pick<Barber, "id" | "name"> {
 export interface ServiceItemProps {
   service: Service
   barbers: BarberWithBookings[]
+  availableDays: { weekday: number; barberId: number }[]
 }
 
 export interface BookingFormData {

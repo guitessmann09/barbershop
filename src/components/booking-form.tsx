@@ -44,7 +44,7 @@ interface BookingFormProps {
   onDaySelect: (date: Date | undefined) => void
   onTimeSelect: (time: string) => void
   onBarberSelect: (barber: Barber) => void
-  onSubmit: () => void
+  availableDays: { weekday: number; barberId: number }[]
 }
 
 export function BookingForm({
@@ -54,7 +54,7 @@ export function BookingForm({
   onDaySelect,
   onTimeSelect,
   onBarberSelect,
-  onSubmit,
+  availableDays,
 }: BookingFormProps) {
   const { selectedDay, selectedTime, selectedBarber } = formData
 
@@ -69,20 +69,34 @@ export function BookingForm({
       milliseconds: 0,
     })
 
+    const weekDay = selectedDateTime.getDay()
+
+    const hasBarbersForWeekDay = availableDays.some(
+      (day) => day.weekday === weekDay,
+    )
+
+    if (!hasBarbersForWeekDay) return []
+
     return barbers.filter((barber) => {
+      const worksOnThisDay = availableDays.some(
+        (day) => day.weekday === weekDay && day.barberId === barber.id,
+      )
+
+      if (!worksOnThisDay) return false
+
       const isBooked = barber.bookings.some((booking) =>
         isEqual(new Date(booking.date), selectedDateTime),
       )
+
       return !isBooked
     })
-  }, [barbers, selectedDay, selectedTime])
+  }, [barbers, selectedDay, selectedTime, availableDays])
 
   const availableTimes = useMemo(() => {
     if (!selectedDay) return TIME_LIST
 
     const now = new Date()
 
-    // Se o dia selecionado for hoje, filtra os horários que já passaram
     if (isSameDay(selectedDay, now)) {
       return TIME_LIST.filter((time) => {
         const [hour, minute] = time.split(":").map(Number)
@@ -96,7 +110,6 @@ export function BookingForm({
       })
     }
 
-    // Se for um dia futuro, retorna todos os horários
     return TIME_LIST
   }, [selectedDay])
 
@@ -110,7 +123,7 @@ export function BookingForm({
           onSelect={onDaySelect}
           fromDate={new Date()}
           className="rounded-lg"
-          onDayClick={(date) => {
+          onDayClick={() => {
             onTimeSelect(undefined as any)
             onBarberSelect(undefined as any)
           }}

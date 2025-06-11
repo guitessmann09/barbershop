@@ -3,25 +3,13 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import quickSearchOptions from "./_constants/search"
 import BookingItem from "@/components/booking-item"
-import { db } from "@/lib/prisma"
 import ServiceItem from "@/components/service-item"
 import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
-
+import { getData } from "@/lib/queries"
 const Home = async () => {
   const session = await getServerSession(authOptions)
-  const services = await db.service.findMany({})
-  const barbers = await db.barber.findMany({
-    select: {
-      id: true,
-      name: true,
-      bookings: {
-        select: { date: true },
-      },
-      imageURL: true,
-    },
-  })
-  const bookings = await db.booking.findMany({})
+  const { services, barbers, bookings, availableDays } = await getData()
 
   const userBookings = session
     ? bookings.filter((booking) => booking.userId === (session as any).user.id)
@@ -98,7 +86,12 @@ const Home = async () => {
         </h2>
         <div className="space-y-3">
           {services.map((service) => (
-            <ServiceItem key={service.id} service={service} barbers={barbers} />
+            <ServiceItem
+              key={service.id}
+              service={service}
+              barbers={barbers}
+              availableDays={availableDays}
+            />
           ))}
         </div>
       </div>

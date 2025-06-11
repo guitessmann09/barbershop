@@ -1,10 +1,9 @@
 "use client"
 
-import { Service } from "@prisma/client"
 import Image from "next/image"
 import { Card, CardContent } from "./ui/card"
 import { Button } from "./ui/button"
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet"
+import { Sheet, SheetContent } from "./ui/sheet"
 import { useState } from "react"
 import { createBooking } from "@/app/_actions/create-bookings"
 import { useSession } from "next-auth/react"
@@ -14,10 +13,8 @@ import { BookingForm } from "./booking-form"
 import { ServiceItemProps, BookingFormData } from "@/types/barbershop"
 import { set } from "date-fns"
 import LoginDialog from "./login-dialog"
-import { Dialog, DialogTrigger } from "./ui/dialog"
-import { LogInIcon } from "lucide-react"
 
-const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
+const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
   const router = useRouter()
   const { data } = useSession()
   const [formData, setFormData] = useState<BookingFormData>({
@@ -56,10 +53,10 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
       })
 
       router.refresh()
-      toast.success("Agendamento feito com sucesso")
+      toast.success("Agendamento realizado com sucesso")
     } catch (error) {
       console.error(error)
-      toast.error("Erro ao fazer o agendamento")
+      toast.error("Erro ao realizar o agendamento")
     }
   }
 
@@ -102,6 +99,7 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                       service={service}
                       barbers={barbers}
                       formData={formData}
+                      availableDays={availableDays}
                       onDaySelect={(date) =>
                         setFormData((prev) => ({ ...prev, selectedDay: date }))
                       }
@@ -114,7 +112,6 @@ const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
                           selectedBarber: barber,
                         }))
                       }
-                      onSubmit={handleCreateBooking}
                     />
                     <div className="mt-5 px-5">
                       <Button
