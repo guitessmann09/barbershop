@@ -17,6 +17,7 @@ import {
 import { BookingFormData, BarberWithBookings } from "@/types/barbershop"
 import { Service, Barber } from "@prisma/client"
 import { useMemo } from "react"
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
 
 const TIME_LIST = [
   "08:00",
@@ -194,16 +195,18 @@ export function BookingForm({
                       <Toggle
                         pressed={selectedBarber?.id === barber.id}
                         onPressedChange={() => onBarberSelect(barber as any)}
-                        className="flex w-full items-center gap-6 border p-6 transition hover:text-white"
+                        className="flex w-full items-center gap-3 border p-6 transition hover:text-white"
                       >
-                        <Image
-                          src="https://github.com/shadcn.png"
-                          alt={barber.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                        />
-                        <p>{barber.name}</p>
+                        <Avatar className="h-10 w-10 border shadow-md">
+                          <AvatarImage
+                            src={barber.imageURL || " "}
+                            alt={barber.name}
+                          />
+                          <AvatarFallback>
+                            {barber.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className="text-sm font-semibold">{barber.name}</p>
                       </Toggle>
                     </CarouselItem>
                   ))

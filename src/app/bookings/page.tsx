@@ -4,6 +4,10 @@ import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { getData } from "@/lib/queries"
+import {
+  getConfirmedBookings,
+  getCompletedBookings,
+} from "@/app/_constants/get-bookings"
 
 const Bookings = async () => {
   const session = await getServerSession(authOptions)
@@ -13,6 +17,9 @@ const Bookings = async () => {
 
   const { bookings, services, barbers } = await getData()
 
+  const confirmedBookings = await getConfirmedBookings(bookings)
+  const completedBookings = await getCompletedBookings(bookings)
+
   return (
     <div>
       <Header />
@@ -20,15 +27,16 @@ const Bookings = async () => {
         <div>
           <h2 className="text-xl font-bold">Agendamentos</h2>
         </div>
-        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
-          Confirmados
-        </h2>
-        {!bookings.length && (
-          <p className="text-sm text-gray-500">Nenhum agendamento confirmado</p>
-        )}
-        {bookings
-          .sort((a, b) => b.date.getTime() - a.date.getTime())
-          .map((booking) => (
+        <div>
+          <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
+            Confirmados
+          </h2>
+          {!confirmedBookings.length && (
+            <p className="text-sm text-gray-500">
+              Nenhum agendamento confirmado
+            </p>
+          )}
+          {confirmedBookings.map((booking) => (
             <BookingItem
               key={booking.id}
               booking={booking}
@@ -36,6 +44,25 @@ const Bookings = async () => {
               barbers={barbers}
             />
           ))}
+        </div>
+        <div>
+          <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
+            Finalizados
+          </h2>
+          {!completedBookings.length && (
+            <p className="text-sm text-gray-500">
+              Nenhum agendamento finalizado
+            </p>
+          )}
+          {completedBookings.map((booking) => (
+            <BookingItem
+              key={booking.id}
+              booking={booking}
+              services={services}
+              barbers={barbers}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

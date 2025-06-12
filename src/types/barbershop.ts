@@ -1,6 +1,7 @@
 import { Service, Barber } from "@prisma/client"
 
-export interface BarberWithBookings extends Pick<Barber, "id" | "name"> {
+export interface BarberWithBookings
+  extends Pick<Barber, "id" | "name" | "imageURL"> {
   bookings: { date: Date }[]
 }
 

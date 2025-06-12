@@ -3,7 +3,7 @@
 import { Booking, Service, Barber } from "@prisma/client"
 import { Badge } from "./ui/badge"
 import { Card, CardContent } from "./ui/card"
-import { Avatar, AvatarImage } from "./ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
 interface BookingItemProps {
   booking: Booking
@@ -35,6 +35,12 @@ const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
                     ?.imageURL || undefined
                 }
               />
+              <AvatarFallback className="bg-gray-200 text-gray-500">
+                {barbers
+                  .find((barber) => barber.id === booking.barberId)
+                  ?.name.charAt(0)
+                  .toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <p className="text-sm">
               {barbers.find((barber) => barber.id === booking.barberId)?.name}
