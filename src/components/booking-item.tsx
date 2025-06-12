@@ -13,6 +13,7 @@ import {
   AlertDialogTrigger,
   AlertDialogFooter,
   AlertDialogCancel,
+  AlertDialogDescription,
 } from "./ui/alert-dialog"
 
 import { deleteBooking } from "@/app/_actions/delete-bookings"
@@ -95,20 +96,26 @@ const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="w-[90%] rounded-lg">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="text-center text-xs font-semibold">
-                      Tem certeza que deseja cancelar o agendamento?
+                  <AlertDialogHeader className="text-center">
+                    <AlertDialogTitle className="text-base font-bold">
+                      Cancelar Agendamento
                     </AlertDialogTitle>
+                    <AlertDialogDescription className="text-sm text-muted-foreground">
+                      Tem certeza que deseja cancelar o agendamento?
+                    </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter className="flex w-full flex-row justify-end gap-4">
+                  <AlertDialogFooter className="flex w-full flex-row justify-center gap-4">
                     <AlertDialogCancel asChild className="m-0">
-                      <Button variant="outline" className="rounded-lg">
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-lg p-2"
+                      >
                         Cancelar
                       </Button>
                     </AlertDialogCancel>
                     <Button
                       variant="destructive"
-                      className="rounded-lg"
+                      className="w-full rounded-lg p-2"
                       onClick={handleCancelBooking}
                       disabled={handleCancelBookingIsLoading}
                     >
