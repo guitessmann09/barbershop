@@ -51,14 +51,19 @@ const Home = async () => {
           </div>
         ) : (
           <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-            {confirmedBookings.map((booking) => (
-              <BookingItem
-                key={booking.id}
-                booking={booking}
-                services={services}
-                barbers={barbers}
-              />
-            ))}
+            {confirmedBookings
+              .sort(
+                (a, b) =>
+                  new Date(a.date).getTime() - new Date(b.date).getTime(),
+              )
+              .map((booking) => (
+                <BookingItem
+                  key={booking.id}
+                  booking={booking}
+                  services={services}
+                  barbers={barbers}
+                />
+              ))}
           </div>
         )}
         {/* QUICK SEARCH */}

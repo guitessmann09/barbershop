@@ -36,14 +36,18 @@ const Bookings = async () => {
               Nenhum agendamento confirmado
             </p>
           )}
-          {confirmedBookings.map((booking) => (
-            <BookingItem
-              key={booking.id}
-              booking={booking}
-              services={services}
-              barbers={barbers}
-            />
-          ))}
+          {confirmedBookings
+            .sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            )
+            .map((booking) => (
+              <BookingItem
+                key={booking.id}
+                booking={booking}
+                services={services}
+                barbers={barbers}
+              />
+            ))}
         </div>
         <div>
           <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">

@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth"
 const getUserBookings = async (bookings: Booking[]) => {
   const session = await getServerSession(authOptions)
   return bookings.filter(
-    (booking) => booking.userId === (session as any).user.id,
+    (booking) => booking.userId === (session as any)?.user.id,
   )
 }
 
