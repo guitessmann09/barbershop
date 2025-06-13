@@ -10,6 +10,11 @@ import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { getData } from "@/lib/queries"
 import BarberBookingItem from "@/components/barber-booking-item"
+import {
+  getTodayBookings,
+  getInComingBookings,
+  getFutureBookings,
+} from "../_constants/get-bookings"
 
 const Dashboard = async () => {
   const session = await getServerSession(authOptions)
@@ -23,21 +28,9 @@ const Dashboard = async () => {
     (booking) => booking.barberId === Number(session.user.id),
   )
 
-  const today = new Date()
-  const todayString = today.toLocaleDateString("pt-BR")
-
-  const todayBookings = myBookings.filter((booking) => {
-    const bookingDate = new Date(booking.date)
-    return bookingDate.toLocaleDateString("pt-BR") === todayString
-  })
-
-  const futureBookings = myBookings.filter((booking) => {
-    const bookingDate = new Date(booking.date)
-    console.log(bookingDate.toLocaleDateString("pt-BR"))
-    return bookingDate.toLocaleDateString("pt-BR") > todayString
-  })
-
-  console.log(futureBookings)
+  const todayBookings = getTodayBookings(myBookings)
+  const inComingBookings = getInComingBookings(todayBookings)
+  const futureBookings = getFutureBookings(myBookings)
 
   return (
     <div className="p-5">
@@ -63,20 +56,24 @@ const Dashboard = async () => {
                 Agendamentos de hoje
               </h3>
               <p className="text-sm text-muted-foreground">
-                {today.toLocaleDateString("pt-BR")}
+                {new Date().toLocaleDateString("pt-BR")}
               </p>
             </div>
             <div className="flex w-full flex-col gap-2">
-              {todayBookings
-                .sort((a, b) => a.date.getTime() - b.date.getTime())
-                .map((booking) => (
+              {inComingBookings.length > 0 ? (
+                inComingBookings.map((booking) => (
                   <BarberBookingItem
                     key={booking.id}
                     appointment={booking}
                     services={services}
                     users={users}
                   />
-                ))}
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Nenhum agendamento para hoje.
+                </p>
+              )}
             </div>
           </div>
           <div className="w-full space-y-2">
@@ -84,17 +81,15 @@ const Dashboard = async () => {
               Agendamentos futuros
             </h3>
             <div className="flex w-full flex-col gap-2">
-              {futureBookings
-                .sort((a, b) => a.date.getTime() - b.date.getTime())
-                .map((booking) => (
-                  <BarberBookingItem
-                    key={booking.id}
-                    appointment={booking}
-                    services={services}
-                    users={users}
-                    isFuture={true}
-                  />
-                ))}
+              {futureBookings.map((booking) => (
+                <BarberBookingItem
+                  key={booking.id}
+                  appointment={booking}
+                  services={services}
+                  users={users}
+                  isFuture={true}
+                />
+              ))}
             </div>
           </div>
         </div>
