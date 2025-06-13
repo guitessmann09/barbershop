@@ -19,7 +19,6 @@ BarberShop é uma aplicação moderna e intuitiva para gerenciamento de agendame
 - 👤 Perfis personalizados para clientes e barbeiros
 - 🎨 Interface moderna e responsiva
 - 🔒 Autenticação segura
-- 🌙 Modo escuro/claro
 - 📱 Design mobile-first
 
 ## 🚀 Tecnologias Utilizadas
