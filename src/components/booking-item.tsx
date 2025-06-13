@@ -52,7 +52,7 @@ const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
     <Card className="mt-3 min-w-[100%]">
       <CardContent className="flex justify-between p-0">
         {/* ESQUERDA */}
-        <div className="flex w-full flex-col gap-2 px-5 py-5">
+        <div className="flex w-full flex-col gap-2 p-5">
           <Badge
             className="w-fit"
             variant={serviceIsComplete ? "secondary" : "default"}
