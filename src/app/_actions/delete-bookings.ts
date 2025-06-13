@@ -22,4 +22,5 @@ export const deleteBooking = async (params: DeleteBookingParams) => {
 
   revalidatePath("/bookings")
   revalidatePath("/app")
+  revalidatePath("/dashboard")
 }

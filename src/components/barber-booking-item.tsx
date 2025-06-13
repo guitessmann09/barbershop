@@ -29,6 +29,8 @@ import { Textarea } from "./ui/textarea"
 import { Avatar } from "./ui/avatar"
 import { AvatarImage } from "./ui/avatar"
 import { AvatarFallback } from "./ui/avatar"
+import { deleteBooking } from "@/app/_actions/delete-bookings"
+import { toast } from "sonner"
 
 interface BarberBookingItemProps {
   appointment: Booking
@@ -53,6 +55,16 @@ const BarberBookingItem = ({
 
   const handleCancelRequest = () => {
     setShowCancelDialog(true)
+  }
+
+  const handleCancelBooking = async () => {
+    try {
+      await deleteBooking({ id: appointment.id })
+      toast.success("Agendamento cancelado com sucesso!")
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao cancelar o agendamento.")
+    }
   }
 
   const formatTime = (date: Date) => {
@@ -171,7 +183,7 @@ const BarberBookingItem = ({
             <Button
               variant="destructive"
               disabled={!cancelReason.trim()}
-              onClick={() => {}}
+              onClick={handleCancelBooking}
               className="w-full rounded-lg"
             >
               Confirmar Cancelamento
