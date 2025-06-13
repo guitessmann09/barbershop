@@ -9,6 +9,7 @@ import {
   AlertCircle,
   UserIcon,
   Calendar,
+  Loader2,
 } from "lucide-react"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
@@ -48,6 +49,8 @@ const BarberBookingItem = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [cancelReason, setCancelReason] = useState("")
+  const [handleCancelBookingIsLoading, setHandleCancelBookingIsLoading] =
+    useState(false)
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded)
@@ -59,11 +62,15 @@ const BarberBookingItem = ({
 
   const handleCancelBooking = async () => {
     try {
+      setHandleCancelBookingIsLoading(true)
       await deleteBooking({ id: appointment.id })
       toast.success("Agendamento cancelado com sucesso!")
     } catch (error) {
       console.error(error)
       toast.error("Erro ao cancelar o agendamento.")
+    } finally {
+      setHandleCancelBookingIsLoading(false)
+      setShowCancelDialog(false)
     }
   }
 
@@ -182,11 +189,15 @@ const BarberBookingItem = ({
             </Button>
             <Button
               variant="destructive"
-              disabled={!cancelReason.trim()}
+              disabled={!cancelReason.trim() || handleCancelBookingIsLoading}
               onClick={handleCancelBooking}
               className="w-full rounded-lg"
             >
-              Confirmar Cancelamento
+              {handleCancelBookingIsLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Confirmar Cancelamento"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
