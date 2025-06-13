@@ -9,9 +9,6 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { getData } from "@/lib/queries"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { AvatarImage } from "@/components/ui/avatar"
 import BarberBookingItem from "@/components/barber-booking-item"
 
 const Dashboard = async () => {
@@ -25,6 +22,22 @@ const Dashboard = async () => {
   const myBookings = bookings.filter(
     (booking) => booking.barberId === Number(session.user.id),
   )
+
+  const today = new Date()
+  const todayString = today.toLocaleDateString("pt-BR")
+
+  const todayBookings = myBookings.filter((booking) => {
+    const bookingDate = new Date(booking.date)
+    return bookingDate.toLocaleDateString("pt-BR") === todayString
+  })
+
+  const futureBookings = myBookings.filter((booking) => {
+    const bookingDate = new Date(booking.date)
+    console.log(bookingDate.toLocaleDateString("pt-BR"))
+    return bookingDate.toLocaleDateString("pt-BR") > todayString
+  })
+
+  console.log(futureBookings)
 
   return (
     <div className="p-5">
@@ -43,21 +56,20 @@ const Dashboard = async () => {
       </div>
       <div className="mt-10">
         <h2 className="text-xl font-bold">Olá, {session.user.name}!</h2>
-        <div className="mt-5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold">Seus agendamentos</h3>
-            <p className="text-sm text-gray-500">
-              {new Date().toLocaleDateString("pt-BR", {
-                day: "numeric",
-                month: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-          <div>
-            {myBookings.length > 0 ? (
-              <div className="flex flex-col gap-2">
-                {myBookings.map((booking) => (
+        <div className="mt-5 flex flex-col gap-5 md:flex-row">
+          <div className="w-full space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-muted-foreground">
+                Agendamentos de hoje
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {today.toLocaleDateString("pt-BR")}
+              </p>
+            </div>
+            <div className="flex w-full flex-col gap-2">
+              {todayBookings
+                .sort((a, b) => a.date.getTime() - b.date.getTime())
+                .map((booking) => (
                   <BarberBookingItem
                     key={booking.id}
                     appointment={booking}
@@ -65,12 +77,25 @@ const Dashboard = async () => {
                     users={users}
                   />
                 ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">
-                Você ainda não tem agendamentos
-              </p>
-            )}
+            </div>
+          </div>
+          <div className="w-full space-y-2">
+            <h3 className="text-base font-semibold text-muted-foreground">
+              Agendamentos futuros
+            </h3>
+            <div className="flex w-full flex-col gap-2">
+              {futureBookings
+                .sort((a, b) => a.date.getTime() - b.date.getTime())
+                .map((booking) => (
+                  <BarberBookingItem
+                    key={booking.id}
+                    appointment={booking}
+                    services={services}
+                    users={users}
+                    isFuture={true}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       </div>

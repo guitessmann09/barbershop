@@ -8,6 +8,7 @@ import {
   ChevronDown,
   AlertCircle,
   UserIcon,
+  Calendar,
 } from "lucide-react"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
@@ -25,17 +26,22 @@ import { useState } from "react"
 import { Booking, Service, User } from "@prisma/client"
 import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
+import { Avatar } from "./ui/avatar"
+import { AvatarImage } from "./ui/avatar"
+import { AvatarFallback } from "./ui/avatar"
 
 interface BarberBookingItemProps {
   appointment: Booking
   services: Service[]
   users: User[]
+  isFuture?: boolean
 }
 
 const BarberBookingItem = ({
   appointment,
   services,
   users,
+  isFuture = false,
 }: BarberBookingItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showCancelDialog, setShowCancelDialog] = useState(false)
@@ -53,33 +59,52 @@ const BarberBookingItem = ({
     return format(date, "HH:mm", { locale: ptBR })
   }
 
+  const userName = users.find((user) => user.id === appointment.userId)?.name
+
+  const serviceName = services.find(
+    (service) => service.id === appointment.serviceId,
+  )?.name
+
   return (
     <>
       <Card className="overflow-hidden transition-all duration-300">
-        <CardContent className="p-0">
+        <CardContent className="p-0 md:p-4">
           <div className="cursor-pointer p-4" onClick={handleToggle}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-lg font-medium">
-                    {users.find((user) => user.id === appointment.userId)?.name}
+                <div className="mb-4 flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage
+                      src={
+                        users.find((user) => user.id === appointment.userId)
+                          ?.image || ""
+                      }
+                    />
+                    <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <h3 className="text-base font-normal text-muted-foreground">
+                    {userName}
                   </h3>
                 </div>
-                <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-4 md:flex-col md:items-start">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <Clock className="h-4 w-4 text-primary" />
                     <span>{formatTime(appointment.date)}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Scissors className="h-4 w-4 text-muted-foreground" />
-                    <span>
-                      {
-                        services.find(
-                          (service) => service.id === appointment.serviceId,
-                        )?.name
-                      }
-                    </span>
+                    <Scissors className="h-4 w-4 text-primary" />
+                    <span>{serviceName}</span>
                   </div>
+                  {isFuture && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <span>
+                        {format(appointment.date, "dd/MM/yyyy", {
+                          locale: ptBR,
+                        })}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -112,10 +137,13 @@ const BarberBookingItem = ({
           <DialogHeader>
             <DialogTitle>Cancelar Agendamento</DialogTitle>
             <DialogDescription>
-              Você está cancelando o agendamento de{" "}
-              {users.find((user) => user.id === appointment.userId)?.name} às{" "}
-              {formatTime(appointment.date)}. Por favor, informe o motivo do
-              cancelamento.
+              Você está cancelando o agendamento de {userName} às{" "}
+              {formatTime(appointment.date)}
+              {isFuture
+                ? " no dia " +
+                  format(appointment.date, "dd/MM/yyyy", { locale: ptBR })
+                : ""}
+              . Por favor, informe o motivo do cancelamento.
             </DialogDescription>
           </DialogHeader>
 
