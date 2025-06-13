@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🪒 BarberShop - Sistema de Agendamento
 
-## Getting Started
+<div align="center">
+  <img src="public/logo.png" alt="BarberShop Logo" width="200"/>
+  
+  [![Next.js](https://img.shields.io/badge/Next.js-14.2.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+  [![Prisma](https://img.shields.io/badge/Prisma-5.17-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
+</div>
 
-First, run the development server:
+## 📋 Sobre o Projeto
+
+BarberShop é uma aplicação moderna e intuitiva para gerenciamento de agendamentos de barbearia. Desenvolvida com as mais recentes tecnologias do mercado, oferece uma experiência fluida tanto para clientes quanto para profissionais.
+
+### ✨ Principais Funcionalidades
+
+- 📅 Sistema de agendamento intuitivo
+- 👤 Perfis personalizados para clientes e barbeiros
+- 🎨 Interface moderna e responsiva
+- 🔒 Autenticação segura
+- 🌙 Modo escuro/claro
+- 📱 Design mobile-first
+
+## 🚀 Tecnologias Utilizadas
+
+- **Frontend:**
+
+  - Next.js 14
+  - TypeScript
+  - Tailwind CSS
+  - React Day Picker
+  - Embla Carousel
+  - ShadCN
+
+- **Backend:**
+
+  - Next.js API Routes
+  - Prisma ORM
+  - NextAuth.js
+  - PostgreSQL
+
+- **Ferramentas de Desenvolvimento:**
+  - ESLint
+  - Prettier
+  - Husky
+  - TypeScript
+
+## 🛠️ Instalação
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/barbershop.git
+cd barbershop
+```
+
+2. Instale as dependências:
+
+```bash
+npm install
+```
+
+3. Configure as variáveis de ambiente:
+
+```bash
+cp .env.example .env
+```
+
+4. Execute as migrações do banco de dados:
+
+```bash
+npx prisma migrate dev
+```
+
+5. Inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📦 Scripts Disponíveis
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm run dev` - Inicia o servidor de desenvolvimento
+- `npm run build` - Cria a build de produção
+- `npm run start` - Inicia o servidor de produção
+- `npm run lint` - Executa o linter
+- `npm run prepare` - Configura o Husky
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## 🤝 Contribuindo
 
-## Learn More
+1. Faça um Fork do projeto
+2. Crie uma Branch para sua Feature (`git checkout -b feature/AmazingFeature`)
+3. Faça o Commit das suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Faça o Push para a Branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-To learn more about Next.js, take a look at the following resources:
+## 📝 Licença
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 📧 Contato
 
-## Deploy on Vercel
+Guilherme Tessmann - [@gui_tessmann](https://www.instagram.com/gui_tessmann/) - tessmanng9@gmail.com
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Link do Projeto: [https://dandys-den.vercel.app/](https://dandys-den.vercel.app/)
