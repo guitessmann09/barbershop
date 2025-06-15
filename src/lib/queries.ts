@@ -8,10 +8,14 @@ export const getData = async () => {
         select: {
           id: true,
           name: true,
+          email: true,
+          imageURL: true,
+          password: true,
+          createdAt: true,
+          updatedAt: true,
           bookings: {
             select: { date: true },
           },
-          imageURL: true,
         },
       }),
       db.booking.findMany(),

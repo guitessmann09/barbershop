@@ -71,7 +71,7 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
             className="rounded-lg object-cover"
           />
         </div>
-        <div className="space-y-2">
+        <div className="w-full space-y-2">
           <h3 className="text-sm font-bold">{service.name}</h3>
           <p className="text-sm text-gray-500">{service.description}</p>
           <div className="flex items-center justify-between">
@@ -92,7 +92,7 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
               >
                 Agendar
               </Button>
-              <SheetContent className="h-full w-[85%] overflow-y-auto px-0">
+              <SheetContent className="h-full overflow-y-auto px-0">
                 {data?.user ? (
                   <>
                     <BookingForm

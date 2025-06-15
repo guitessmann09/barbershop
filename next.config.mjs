@@ -8,6 +8,9 @@ const nextConfig = {
       {
         hostname: "github.com",
       },
+      {
+        hostname: "yw0ygga3t5.ufs.sh",
+      },
     ],
   },
 }

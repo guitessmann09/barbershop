@@ -1,6 +1,8 @@
 import { authOptions } from "@/lib/auth"
 import { Booking } from "@prisma/client"
 import { getServerSession } from "next-auth"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
 const getUserBookings = async (bookings: Booking[]) => {
   const session = await getServerSession(authOptions)
@@ -24,13 +26,13 @@ export const getCompletedBookings = async (bookings: Booking[]) => {
 }
 
 const today = new Date()
-const todayString = today.toLocaleDateString("pt-BR")
+const todayString = format(today, "dd/MM/yyyy", { locale: ptBR })
 
 export const getTodayBookings = (myBookings: Booking[]) =>
   myBookings
     .filter((booking) => {
       const bookingDate = new Date(booking.date)
-      return bookingDate.toLocaleDateString("pt-BR") === todayString
+      return format(bookingDate, "dd/MM/yyyy", { locale: ptBR }) === todayString
     })
     .sort((a, b) => a.date.getTime() - b.date.getTime())
 
@@ -46,6 +48,6 @@ export const getFutureBookings = (myBookings: Booking[]) =>
   myBookings
     .filter((booking) => {
       const bookingDate = new Date(booking.date)
-      return bookingDate.toLocaleDateString("pt-BR") > todayString
+      return format(bookingDate, "dd/MM/yyyy", { locale: ptBR }) > todayString
     })
     .sort((a, b) => a.date.getTime() - b.date.getTime())

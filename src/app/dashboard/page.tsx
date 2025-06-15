@@ -15,6 +15,8 @@ import {
   getInComingBookings,
   getFutureBookings,
 } from "../_constants/get-bookings"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
 const Dashboard = async () => {
   const session = await getServerSession(authOptions)
@@ -55,9 +57,15 @@ const Dashboard = async () => {
               <h3 className="text-base font-semibold text-muted-foreground">
                 Agendamentos de hoje
               </h3>
-              <p className="text-sm text-muted-foreground">
-                {new Date().toLocaleDateString("pt-BR")}
-              </p>
+              <div>
+                <span className="text-sm capitalize text-gray-500">
+                  {format(new Date(), "EEEE, d", { locale: ptBR })}
+                </span>
+                <span className="text-sm text-gray-500"> de </span>
+                <span className="text-sm capitalize text-gray-500">
+                  {format(new Date(), "MMMM", { locale: ptBR })}
+                </span>
+              </div>
             </div>
             <div className="flex w-full flex-col gap-2">
               {inComingBookings.length > 0 ? (
@@ -76,22 +84,24 @@ const Dashboard = async () => {
               )}
             </div>
           </div>
-          <div className="w-full space-y-2">
-            <h3 className="text-base font-semibold text-muted-foreground">
-              Agendamentos futuros
-            </h3>
-            <div className="flex w-full flex-col gap-2">
-              {futureBookings.map((booking) => (
-                <BarberBookingItem
-                  key={booking.id}
-                  appointment={booking}
-                  services={services}
-                  users={users}
-                  isFuture={true}
-                />
-              ))}
+          {futureBookings.length > 0 && (
+            <div className="w-full space-y-2">
+              <h3 className="text-base font-semibold text-muted-foreground">
+                Agendamentos futuros
+              </h3>
+              <div className="flex w-full flex-col gap-2">
+                {futureBookings.map((booking) => (
+                  <BarberBookingItem
+                    key={booking.id}
+                    appointment={booking}
+                    services={services}
+                    users={users}
+                    isFuture={true}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
