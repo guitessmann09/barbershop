@@ -5,7 +5,7 @@ import {
   HomeIcon,
   LogInIcon,
   LogOutIcon,
-  UserIcon,
+  Settings,
 } from "lucide-react"
 import {
   SheetContent,
@@ -14,15 +14,13 @@ import {
   SheetDescription,
   SheetClose,
 } from "./ui/sheet"
-import quickSearchOptions from "@/app/_constants/search"
 import Link from "next/link"
 import { Button } from "./ui/button"
-import Image from "next/image"
 import { Dialog, DialogTrigger } from "./ui/dialog"
 import LoginDialog from "./login-dialog"
 import { useSession } from "next-auth/react"
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
 import LogoutDialog from "./logout-dialog"
+import Image from "next/image"
 
 const SidebarSheet = () => {
   const { data } = useSession()
@@ -34,12 +32,14 @@ const SidebarSheet = () => {
 
         {data?.user ? (
           <SheetDescription className="flex items-center gap-3 pt-6">
-            <Avatar className="h-12 w-12 border-2 border-primary">
-              <AvatarImage src={data?.user?.image ?? undefined} />
-              <AvatarFallback>
-                <UserIcon />
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative h-12 w-12">
+              <Image
+                src={data?.user?.image ?? ""}
+                alt={data?.user?.name ?? ""}
+                fill
+                className="rounded-full border-2 border-primary object-cover"
+              />
+            </div>
             <div>
               <p className="text-base font-bold text-foreground">
                 {data?.user?.name}
@@ -58,7 +58,7 @@ const SidebarSheet = () => {
                   <LogInIcon size={18} />
                 </Button>
               </DialogTrigger>
-              <LoginDialog />
+              <LoginDialog isOpen={true} onOpenChange={() => {}} />
             </Dialog>
           </SheetDescription>
         )}
@@ -67,7 +67,7 @@ const SidebarSheet = () => {
       <div className="flex flex-col gap-2 border-y-[1px] py-6">
         <SheetClose asChild>
           <Button
-            variant="secondary"
+            variant="ghost"
             className="flex items-center justify-start gap-2"
             asChild
           >
@@ -83,7 +83,11 @@ const SidebarSheet = () => {
             className="flex items-center justify-start gap-2"
           >
             <Link
-              href="/bookings"
+              href={
+                data?.user?.provider === "credentials"
+                  ? "/dashboard"
+                  : "/bookings"
+              }
               className="flex w-full items-center justify-start gap-2"
             >
               <CalendarIcon size={18} />
@@ -91,24 +95,13 @@ const SidebarSheet = () => {
             </Link>
           </Button>
         )}
-      </div>
-      {/* SERVIÇOS */}
-      <div className="flex flex-col gap-2 py-6">
-        {quickSearchOptions.map((option) => (
-          <Button
-            key={option.name}
-            className="flex items-center justify-start gap-2"
-            variant="ghost"
-          >
-            <Image
-              src={option.imageURL}
-              alt={option.name}
-              width={16}
-              height={16}
-            />
-            <p>{option.name}</p>
-          </Button>
-        ))}
+        <Button
+          variant="ghost"
+          className="flex items-center justify-start gap-2"
+        >
+          <Settings size={18} />
+          <p className="text-sm">Configurações</p>
+        </Button>
       </div>
       {data?.user && (
         <div className="border-t">

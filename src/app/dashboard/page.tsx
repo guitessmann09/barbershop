@@ -17,6 +17,7 @@ import {
 } from "../_constants/get-bookings"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import Header from "@/components/header"
 
 const Dashboard = async () => {
   const session = await getServerSession(authOptions)
@@ -35,21 +36,9 @@ const Dashboard = async () => {
   const futureBookings = getFutureBookings(myBookings)
 
   return (
-    <div className="p-5">
-      <div className="flex items-center justify-between">
-        <Link href="/" className="cursor-pointer">
-          <Image src="/logo.png" alt="Dandy's Den" width={130} height={130} />
-        </Link>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="icon" className="cursor-pointer">
-              <LogOutIcon size={18} />
-            </Button>
-          </DialogTrigger>
-          <LogoutDialog />
-        </Dialog>
-      </div>
-      <div className="mt-10">
+    <div>
+      <Header user={session.user as any} />
+      <div className="p-5 lg:px-32">
         <h2 className="text-xl font-bold">Olá, {session.user.name}!</h2>
         <div className="mt-5 flex flex-col gap-5 md:flex-row">
           <div className="w-full space-y-2">

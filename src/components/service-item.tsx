@@ -17,6 +17,7 @@ import LoginDialog from "./login-dialog"
 const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
   const router = useRouter()
   const { data } = useSession()
+  const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
   const [formData, setFormData] = useState<BookingFormData>({
     selectedDay: undefined,
     selectedTime: undefined,
@@ -88,51 +89,55 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setBookingSheetIsOpen(true)}
+                onClick={() => {
+                  if (!data?.user) {
+                    setLoginDialogIsOpen(true)
+                  } else {
+                    setBookingSheetIsOpen(true)
+                  }
+                }}
               >
                 Agendar
               </Button>
+              <LoginDialog
+                isOpen={loginDialogIsOpen}
+                onOpenChange={setLoginDialogIsOpen}
+              />
               <SheetContent className="h-full overflow-y-auto px-0">
-                {data?.user ? (
-                  <>
-                    <BookingForm
-                      service={service}
-                      barbers={barbers}
-                      formData={formData}
-                      availableDays={availableDays}
-                      onDaySelect={(date) =>
-                        setFormData((prev) => ({ ...prev, selectedDay: date }))
-                      }
-                      onTimeSelect={(time) =>
-                        setFormData((prev) => ({ ...prev, selectedTime: time }))
-                      }
-                      onBarberSelect={(barber) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          selectedBarber: barber,
-                        }))
-                      }
-                    />
-                    <div className="mt-5 px-5">
-                      <Button
-                        className="w-full"
-                        disabled={
-                          !formData.selectedTime ||
-                          !formData.selectedDay ||
-                          !formData.selectedBarber
-                        }
-                        onClick={() => {
-                          handleCreateBooking()
-                          handleBookingSheetOpenChange()
-                        }}
-                      >
-                        Confirmar
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <LoginDialog />
-                )}
+                <BookingForm
+                  service={service}
+                  barbers={barbers}
+                  formData={formData}
+                  availableDays={availableDays}
+                  onDaySelect={(date) =>
+                    setFormData((prev) => ({ ...prev, selectedDay: date }))
+                  }
+                  onTimeSelect={(time) =>
+                    setFormData((prev) => ({ ...prev, selectedTime: time }))
+                  }
+                  onBarberSelect={(barber) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      selectedBarber: barber,
+                    }))
+                  }
+                />
+                <div className="mt-5 px-5">
+                  <Button
+                    className="w-full"
+                    disabled={
+                      !formData.selectedTime ||
+                      !formData.selectedDay ||
+                      !formData.selectedBarber
+                    }
+                    onClick={() => {
+                      handleCreateBooking()
+                      handleBookingSheetOpenChange()
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </div>
               </SheetContent>
             </Sheet>
           </div>
