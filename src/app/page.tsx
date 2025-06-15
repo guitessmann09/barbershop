@@ -10,7 +10,7 @@ import { getData } from "@/lib/queries"
 import { getConfirmedBookings } from "@/app/_constants/get-bookings"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import Test from "@/components/test"
+import Test from "@/components/home-section"
 import { Session } from "next-auth"
 
 const Home = async () => {
@@ -21,7 +21,7 @@ const Home = async () => {
 
   return (
     <div>
-      <Header />
+      <Header user={session?.user as any} />
       <div className="p-5 md:px-5 md:pt-0 lg:px-32">
         <Test
           session={session as Session}
@@ -31,14 +31,15 @@ const Home = async () => {
           barbers={barbers}
         />
         <div className="md:hidden">
-          <h2 className="text-xl font-bold">
-            Olá, {session?.user?.name?.split(" ")[0] || "faça login e agende!"}
+          <h2 className="text-xl font-semibold">
+            <span className="font-normal">Olá,</span>{" "}
+            {session?.user?.name?.split(" ")[0] || "faça login e agende"}!
           </h2>
-          <span className="text-sm capitalize text-gray-500">
+          <span className="text-sm capitalize text-white">
             {format(new Date(), "EEEE, d", { locale: ptBR })}
           </span>
-          <span className="text-sm text-gray-500"> de </span>
-          <span className="text-sm capitalize text-gray-500">
+          <span className="text-sm text-white"> de </span>
+          <span className="text-sm capitalize text-white">
             {format(new Date(), "MMMM", { locale: ptBR })}
           </span>
         </div>
