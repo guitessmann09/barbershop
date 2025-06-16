@@ -21,9 +21,11 @@ import LoginDialog from "./login-dialog"
 import { useSession } from "next-auth/react"
 import LogoutDialog from "./logout-dialog"
 import Image from "next/image"
+import { useState } from "react"
 
 const SidebarSheet = () => {
   const { data } = useSession()
+  const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
 
   return (
     <SheetContent className="overflow-y-auto px-5 py-3">
@@ -54,11 +56,14 @@ const SidebarSheet = () => {
             </h2>
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="icon">
+                <Button size="icon" onClick={() => setLoginDialogIsOpen(true)}>
                   <LogInIcon size={18} />
                 </Button>
               </DialogTrigger>
-              <LoginDialog isOpen={true} onOpenChange={() => {}} />
+              <LoginDialog
+                isOpen={loginDialogIsOpen}
+                onOpenChange={setLoginDialogIsOpen}
+              />
             </Dialog>
           </SheetDescription>
         )}
