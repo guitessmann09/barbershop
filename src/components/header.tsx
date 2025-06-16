@@ -88,10 +88,17 @@ const Header = ({ user }: { user: User }) => {
                       <p className="text-sm">Agendamentos</p>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-transparent hover:text-primary">
-                    <Settings size={18} />
-                    <p className="text-sm">Configurações</p>
-                  </DropdownMenuItem>
+                  {user.provider === "credentials" && (
+                    <DropdownMenuItem className="cursor-pointer hover:bg-transparent hover:text-primary">
+                      <Link
+                        href="/settings"
+                        className="flex w-full items-center gap-2"
+                      >
+                        <Settings size={18} />
+                        <p className="text-sm">Configurações</p>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem
                     className="cursor-pointer hover:bg-transparent hover:text-primary"
                     onClick={() => {

@@ -100,13 +100,18 @@ const SidebarSheet = () => {
             </Link>
           </Button>
         )}
-        <Button
-          variant="ghost"
-          className="flex items-center justify-start gap-2"
-        >
-          <Settings size={18} />
-          <p className="text-sm">Configurações</p>
-        </Button>
+        {data?.user?.provider === "credentials" && (
+          <Button
+            variant="ghost"
+            className="flex w-full items-center justify-start gap-2"
+            asChild
+          >
+            <Link href="/settings">
+              <Settings size={18} />
+              <p className="text-sm">Configurações</p>
+            </Link>
+          </Button>
+        )}
       </div>
       {data?.user && (
         <div className="border-t">
