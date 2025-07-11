@@ -1,7 +1,5 @@
 import Header from "@/components/header"
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import quickSearchOptions from "./_constants/search"
 import BookingItem from "@/components/booking-item"
 import ServiceItem from "@/components/service-item"
 import { authOptions } from "@/lib/auth"
@@ -12,6 +10,8 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Test from "@/components/home-section"
 import { Session } from "next-auth"
+import BannerAnimated from "@/components/banner-animated"
+import Link from "next/link"
 
 const Home = async () => {
   const session = await getServerSession(authOptions)
@@ -44,15 +44,10 @@ const Home = async () => {
           </span>
         </div>
         {/* BANNER */}
-        <div className="relative mt-5 h-[150px] w-full md:hidden">
-          <Image
-            src="/dandys-den-banner-01.png"
-            alt="Dandy's Den"
-            fill
-            className="rounded-xl object-cover"
-          />
-        </div>
 
+        <Link href="/subscriptions">
+          <BannerAnimated />
+        </Link>
         {/* AGENDAMENTOS */}
         <div className="md:hidden">
           <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
@@ -82,20 +77,6 @@ const Home = async () => {
             </div>
           )}
         </div>
-        {/* QUICK SEARCH */}
-        {/* <div className="my-6 flex items-center gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-          {quickSearchOptions.map((option) => (
-            <Button key={option.name} className="gap-2" variant="secondary">
-              <Image
-                src={option.imageURL}
-                alt={option.name}
-                width={16}
-                height={16}
-              />
-              <p>{option.name}</p>
-            </Button>
-          ))}
-        </div> */}
 
         {/* SERVICOS */}
         <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
