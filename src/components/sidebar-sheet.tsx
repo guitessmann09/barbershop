@@ -6,6 +6,7 @@ import {
   LogInIcon,
   LogOutIcon,
   Settings,
+  StarIcon,
 } from "lucide-react"
 import {
   SheetContent,
@@ -82,6 +83,16 @@ const SidebarSheet = () => {
             </Link>
           </Button>
         </SheetClose>
+        <Button
+          variant="ghost"
+          className="flex items-center justify-start gap-2"
+          asChild
+        >
+          <Link href="/subscriptions">
+            <StarIcon size={18} />
+            <p className="text-sm font-normal">Assinaturas</p>
+          </Link>
+        </Button>
         {data?.user && (
           <Button
             variant="ghost"
