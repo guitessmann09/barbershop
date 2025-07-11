@@ -3,22 +3,24 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String       @unique
   emailVerified DateTime?
   image         String?
   phone         String?
+  subscription  Subscription @default(DEFAULT)
   accounts      Account[]
   sessions      Session[]
   bookings      Booking[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Account {
@@ -72,12 +74,12 @@ model Service {
 model Booking {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   serviceId String
-  service   Service  @relation(fields: [serviceId], references: [id])
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   date      DateTime
   barberId  Int
-  barber    Barber   @relation(fields: [barberId], references: [id])
+  barber    Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -97,7 +99,7 @@ model Barber {
 
 model Availability {
   id           Int      @id @default(autoincrement())
-  barber       Barber   @relation(fields: [barberId], references: [id])
+  barber       Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
   barberId     Int
   weekday      Int
   startTime    String
@@ -114,4 +116,11 @@ model BlockedSlot {
   date      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Subscription {
+  DEFAULT
+  STANDARD
+  PLUS
+  PREMIUM
 }
