@@ -1,11 +1,12 @@
 import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import { ptBR, se } from "date-fns/locale"
 import { Session } from "next-auth"
 import { ClassValue } from "clsx"
 import { cn } from "@/lib/utils"
 import { Booking, Service, Barber } from "@prisma/client"
-import BookingItem from "./booking-item"
 import BarberCard from "./barber-card"
+import BookingComponent from "./bookings-component"
+import AnimatedBanner from "./banner-animated"
 
 interface TestProps {
   session: Session
@@ -44,31 +45,15 @@ const Test = ({
             {format(new Date(), "MMMM", { locale: ptBR })}
           </span>
           <div>
-            <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
-              Agendamentos
-            </h2>
-            {!session || !confirmedBookings.length ? (
-              <div className="mt-3">
-                <p className="text-sm text-gray-500">
-                  Você ainda não tem agendamentos
-                </p>
-              </div>
+            {session ? (
+              <BookingComponent
+                session={session}
+                confirmedBookings={confirmedBookings}
+                services={services}
+                barbers={barbers}
+              />
             ) : (
-              <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-                {confirmedBookings
-                  .sort(
-                    (a, b) =>
-                      new Date(a.date).getTime() - new Date(b.date).getTime(),
-                  )
-                  .map((booking) => (
-                    <BookingItem
-                      key={booking.id}
-                      booking={booking}
-                      services={services}
-                      barbers={barbers}
-                    />
-                  ))}
-              </div>
+              <AnimatedBanner />
             )}
           </div>
         </div>

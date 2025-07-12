@@ -9,6 +9,7 @@ import {
   MenuIcon,
   Settings,
   HomeIcon,
+  StarIcon,
 } from "lucide-react"
 import { Sheet, SheetTrigger } from "./ui/sheet"
 import SidebarSheet from "./sidebar-sheet"
@@ -46,7 +47,17 @@ const Header = ({ user }: { user: User }) => {
           </SheetTrigger>
           <SidebarSheet />
         </Sheet>
-        <div className="hidden lg:block">
+        <div className="hidden lg:flex lg:gap-4">
+          <Button
+            asChild
+            variant="ghost"
+            className="flex items-center gap-2 px-4 py-2 hover:bg-transparent hover:text-primary"
+          >
+            <Link href="/subscriptions">
+              <StarIcon />
+              <span>Assinaturas</span>
+            </Link>
+          </Button>
           {user ? (
             <div className="flex items-center gap-4 font-semibold">
               <DropdownMenu>
@@ -55,6 +66,9 @@ const Header = ({ user }: { user: User }) => {
                     variant="ghost"
                     className="flex w-full items-center gap-2 px-4 py-2 hover:bg-transparent hover:text-primary"
                   >
+                    <p className="max-w-[100px] truncate text-sm">
+                      {user.name}
+                    </p>
                     <div className="relative h-10 w-10">
                       <Image
                         src={user.image}
@@ -63,9 +77,6 @@ const Header = ({ user }: { user: User }) => {
                         className="rounded-full object-cover"
                       />
                     </div>
-                    <p className="max-w-[100px] truncate text-sm">
-                      {user.name}
-                    </p>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-muted">
@@ -112,7 +123,7 @@ const Header = ({ user }: { user: User }) => {
               </DropdownMenu>
             </div>
           ) : (
-            <>
+            <div className="flex gap-4">
               <Button
                 variant="outline"
                 className="flex items-center gap-2"
@@ -127,7 +138,7 @@ const Header = ({ user }: { user: User }) => {
                 isOpen={loginDialogIsOpen}
                 onOpenChange={setLoginDialogIsOpen}
               />
-            </>
+            </div>
           )}
         </div>
       </CardContent>

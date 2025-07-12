@@ -1,17 +1,15 @@
 import Header from "@/components/header"
-import Image from "next/image"
 import BookingItem from "@/components/booking-item"
 import ServiceItem from "@/components/service-item"
 import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
+import { Session } from "next-auth"
 import { getData } from "@/lib/queries"
 import { getConfirmedBookings } from "@/app/_constants/get-bookings"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Test from "@/components/home-section"
-import { Session } from "next-auth"
-import BannerAnimated from "@/components/banner-animated"
-import Link from "next/link"
+import AnimatedBanner from "@/components/banner-animated"
 
 const Home = async () => {
   const session = await getServerSession(authOptions)
@@ -44,10 +42,9 @@ const Home = async () => {
           </span>
         </div>
         {/* BANNER */}
-
-        <Link href="/subscriptions">
-          <BannerAnimated />
-        </Link>
+        <div className="md:hidden">
+          <AnimatedBanner />
+        </div>
         {/* AGENDAMENTOS */}
         <div className="md:hidden">
           <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
