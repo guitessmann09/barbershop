@@ -1,14 +1,69 @@
 import Header from "@/components/header"
+import SubscriptionCard from "@/components/subscription-card"
 import { authOptions } from "@/lib/auth"
+import { getData } from "@/lib/queries"
 import { getServerSession } from "next-auth"
 
 const SubscriptionsPage = async () => {
   const session = await getServerSession(authOptions)
+  const { subscriptions } = await getData()
   return (
     <>
       <Header user={session?.user as any} />
-      <div>
-        <h2 className="text-xl font-bold">Assinaturas</h2>
+      <div className="p-5 lg:px-32">
+        <h2 className="text-xl font-bold">Clube de Cavalheiros</h2>
+        <div>
+          <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
+            Assinatura corte
+          </h2>
+          <div className="flex flex-row gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+            {subscriptions
+              .filter(
+                (sub) =>
+                  sub.name.includes("Corte") && !sub.name.includes("Barba"),
+              )
+              .map((subscription) => (
+                <SubscriptionCard
+                  key={subscription.id}
+                  subscription={subscription}
+                />
+              ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
+            Assinatura barba
+          </h2>
+          <div className="flex flex-row gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+            {subscriptions
+              .filter(
+                (sub) =>
+                  sub.name.includes("Barba") &&
+                  !sub.name.includes("Corte e Barba"),
+              )
+              .map((subscription) => (
+                <SubscriptionCard
+                  key={subscription.id}
+                  subscription={subscription}
+                />
+              ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
+            Assinatura corte e barba
+          </h2>
+          <div className="flex flex-row gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+            {subscriptions
+              .filter((sub) => sub.name.includes("Corte e Barba"))
+              .map((subscription) => (
+                <SubscriptionCard
+                  key={subscription.id}
+                  subscription={subscription}
+                />
+              ))}
+          </div>
+        </div>
       </div>
     </>
   )
