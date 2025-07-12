@@ -1,8 +1,10 @@
+"server only"
+
 import { db } from "@/lib/prisma"
 
 export const getData = async () => {
-  const [services, barbers, bookings, users, availableDays] = await Promise.all(
-    [
+  const [services, barbers, bookings, users, availableDays, subscriptions] =
+    await Promise.all([
       db.service.findMany(),
       db.barber.findMany({
         select: {
@@ -26,8 +28,12 @@ export const getData = async () => {
           barberId: true,
         },
       }),
-    ],
-  )
+      db.subscription.findMany({
+        include: {
+          benefits: true,
+        },
+      }),
+    ])
 
-  return { services, barbers, bookings, users, availableDays }
+  return { services, barbers, bookings, users, availableDays, subscriptions }
 }
