@@ -16,7 +16,7 @@ const SubscriptionsPage = async () => {
           <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
             Assinatura corte
           </h2>
-          <div className="flex flex-row gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-row gap-4 overflow-x-scroll lg:grid lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
             {subscriptions
               .filter(
                 (sub) =>
@@ -34,7 +34,7 @@ const SubscriptionsPage = async () => {
           <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
             Assinatura barba
           </h2>
-          <div className="flex flex-row gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-row gap-4 overflow-x-scroll lg:grid lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
             {subscriptions
               .filter(
                 (sub) =>
@@ -53,7 +53,7 @@ const SubscriptionsPage = async () => {
           <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
             Assinatura corte e barba
           </h2>
-          <div className="flex flex-row gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-row gap-4 overflow-x-scroll lg:grid lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
             {subscriptions
               .filter((sub) => sub.name.includes("Corte e Barba"))
               .map((subscription) => (
