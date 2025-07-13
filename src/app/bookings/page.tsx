@@ -8,6 +8,7 @@ import {
   getConfirmedBookings,
   getCompletedBookings,
 } from "@/app/_constants/get-bookings"
+import getUserWithProvider from "../_helpers/get-user-with-provider"
 
 const Bookings = async () => {
   const session = await getServerSession(authOptions)
@@ -19,6 +20,10 @@ const Bookings = async () => {
     redirect("/dashboard")
   }
 
+  const user = session?.user?.id
+    ? await getUserWithProvider({ userId: session.user.id })
+    : null
+
   const { bookings, services, barbers } = await getData()
 
   const confirmedBookings = await getConfirmedBookings(bookings)
@@ -26,7 +31,7 @@ const Bookings = async () => {
 
   return (
     <div>
-      <Header user={session.user as any} />
+      <Header user={user} />
       <div className="p-5 lg:px-32">
         <div>
           <h2 className="text-xl font-bold">Agendamentos</h2>

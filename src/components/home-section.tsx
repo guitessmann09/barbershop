@@ -9,7 +9,7 @@ import BookingComponent from "./bookings-component"
 import AnimatedBanner from "./banner-animated"
 
 interface TestProps {
-  session: Session
+  session: Session | null
   className?: ClassValue
   confirmedBookings: Booking[]
   services: Service[]

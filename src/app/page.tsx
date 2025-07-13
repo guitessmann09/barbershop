@@ -3,13 +3,13 @@ import BookingItem from "@/components/booking-item"
 import ServiceItem from "@/components/service-item"
 import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
-import { Session } from "next-auth"
 import { getData } from "@/lib/queries"
 import { getConfirmedBookings } from "@/app/_constants/get-bookings"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Test from "@/components/home-section"
 import AnimatedBanner from "@/components/banner-animated"
+import getUserWithProvider from "./_helpers/get-user-with-provider"
 
 const Home = async () => {
   const session = await getServerSession(authOptions)
@@ -17,12 +17,16 @@ const Home = async () => {
 
   const confirmedBookings = await getConfirmedBookings(bookings)
 
+  const user = session?.user?.id
+    ? await getUserWithProvider({ userId: session.user.id })
+    : null
+
   return (
     <div>
-      <Header user={session?.user as any} />
+      <Header user={user} />
       <div className="p-5 md:px-5 md:pt-0 lg:px-32">
         <Test
-          session={session as Session}
+          session={session}
           className="hidden md:block"
           confirmedBookings={confirmedBookings}
           services={services}

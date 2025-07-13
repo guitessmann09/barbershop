@@ -23,15 +23,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import { Account, Subscription } from "@prisma/client"
 
-interface User {
-  name: string
-  email: string
-  image: string
-  provider: string
+interface HeaderProps {
+  user: {
+    name: string | null
+    email: string
+    image: string | null
+    subscription: Subscription | null
+  } | null
 }
 
-const Header = ({ user }: { user: User }) => {
+const Header = ({ user }: HeaderProps) => {
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
   return (
     <Card className="border-none bg-transparent">
@@ -67,12 +70,12 @@ const Header = ({ user }: { user: User }) => {
                     className="flex w-full items-center gap-2 px-4 py-2 hover:bg-transparent hover:text-primary"
                   >
                     <p className="max-w-[100px] truncate text-sm">
-                      {user.name}
+                      {user?.name}
                     </p>
                     <div className="relative h-10 w-10">
                       <Image
-                        src={user.image}
-                        alt={user.name}
+                        src={user?.image || "/default-avatar.png"}
+                        alt={user?.name || "Usuário"}
                         fill
                         className="rounded-full object-cover"
                       />
@@ -88,28 +91,13 @@ const Header = ({ user }: { user: User }) => {
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer hover:bg-transparent hover:text-primary">
                     <Link
-                      href={
-                        user.provider === "credentials"
-                          ? "/dashboard"
-                          : "/bookings"
-                      }
+                      href="/bookings"
                       className="flex w-full items-center gap-2"
                     >
                       <Calendar size={18} />
                       <p className="text-sm">Agendamentos</p>
                     </Link>
                   </DropdownMenuItem>
-                  {user.provider === "credentials" && (
-                    <DropdownMenuItem className="cursor-pointer hover:bg-transparent hover:text-primary">
-                      <Link
-                        href="/settings"
-                        className="flex w-full items-center gap-2"
-                      >
-                        <Settings size={18} />
-                        <p className="text-sm">Configurações</p>
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
                   <DropdownMenuItem
                     className="cursor-pointer hover:bg-transparent hover:text-primary"
                     onClick={() => {

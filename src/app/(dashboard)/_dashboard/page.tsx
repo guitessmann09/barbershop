@@ -1,10 +1,3 @@
-import { Button } from "@/components/ui/button"
-import { Dialog } from "@/components/ui/dialog"
-import { DialogTrigger } from "@/components/ui/dialog"
-import LogoutDialog from "@/components/logout-dialog"
-import { LogOutIcon } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -14,10 +7,12 @@ import {
   getTodayBookings,
   getInComingBookings,
   getFutureBookings,
-} from "../_constants/get-bookings"
+} from "../../_constants/get-bookings"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Header from "@/components/header"
+import getUserWithProvider from "../../_helpers/get-user-with-provider"
+import verifyProvider from "../../_helpers/verifyProvider"
 
 const Dashboard = async () => {
   const session = await getServerSession(authOptions)
@@ -31,13 +26,17 @@ const Dashboard = async () => {
     (booking) => booking.barberId === Number(session.user.id),
   )
 
+  const user = session?.user?.id
+    ? await getUserWithProvider({ userId: session.user.id })
+    : null
+
   const todayBookings = getTodayBookings(myBookings)
   const inComingBookings = getInComingBookings(todayBookings)
   const futureBookings = getFutureBookings(myBookings)
 
   return (
     <div>
-      <Header user={session.user as any} />
+      <Header user={user} />
       <div className="p-5 lg:px-32">
         <h2 className="text-xl font-bold">Olá, {session.user.name}!</h2>
         <div className="mt-5 flex flex-col gap-5 md:flex-row">
