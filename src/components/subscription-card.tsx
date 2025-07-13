@@ -1,15 +1,37 @@
+"use client"
+
 import { CheckIcon } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card"
 import { Separator } from "./ui/separator"
 import { Subscription, Benefit } from "@prisma/client"
+import { Button } from "./ui/button"
+import { createStripeCheckoutBySubscription } from "@/app/subscriptions/_stripe/stripe"
+import { loadStripe } from "@stripe/stripe-js"
 
 interface SubscriptionCardProps {
   subscription: Subscription & { benefits: Benefit[] }
+  userId: string | undefined
 }
 
-const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
+const SubscriptionCard = ({ subscription, userId }: SubscriptionCardProps) => {
+  const handleSubscriptionClick = async () => {
+    const { sessionId } = await createStripeCheckoutBySubscription({
+      userId,
+      subscriptionId: subscription.id,
+    })
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      throw new Error("Stripe publishable key not found")
+    }
+    const stripe = await loadStripe(
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    )
+    if (!stripe) {
+      throw new Error("Stripe not found")
+    }
+    await stripe.redirectToCheckout({ sessionId })
+  }
   return (
-    <Card className="my-3 min-w-[90%]">
+    <Card className="my-3 flex min-w-[90%] flex-col">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle>{subscription.name}</CardTitle>
         <span className="font-semibold text-primary">
@@ -30,6 +52,9 @@ const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           ))}
         </ul>
       </CardContent>
+      <CardFooter className="h-full items-end justify-end">
+        <Button onClick={handleSubscriptionClick}>Assinar plano</Button>
+      </CardFooter>
     </Card>
   )
 }

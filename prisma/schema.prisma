@@ -11,16 +11,16 @@ model User {
   id             String        @id @default(cuid())
   name           String?
   email          String        @unique
-  emailVerified  DateTime?
-  image          String?
   phone          String?
-  subscriptionID Int?
-  subscription   Subscription? @relation(fields: [subscriptionID], references: [id])
-  accounts       Account[]
-  sessions       Session[]
-  bookings       Booking[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  emailVerified  DateTime?
+  image          String?
+  subscriptionID Int?
+  accounts       Account[]
+  bookings       Booking[]
+  sessions       Session[]
+  subscription   Subscription? @relation(fields: [subscriptionID], references: [id])
 }
 
 model Account {
@@ -35,11 +35,9 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -48,10 +46,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -74,14 +71,14 @@ model Service {
 model Booking {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   serviceId String
-  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   date      DateTime
-  barberId  Int
-  barber    Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  barberId  Int
+  barber    Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Barber {
@@ -90,16 +87,15 @@ model Barber {
   email          String         @unique
   imageURL       String?
   password       String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   availabilities Availability[]
   blockedSlots   BlockedSlot[]
   bookings       Booking[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
 }
 
 model Availability {
   id           Int      @id @default(autoincrement())
-  barber       Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
   barberId     Int
   weekday      Int
   startTime    String
@@ -107,23 +103,25 @@ model Availability {
   slotDuration Int
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  barber       Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
 }
 
 model BlockedSlot {
   id        Int      @id @default(autoincrement())
-  barber    Barber   @relation(fields: [barberId], references: [id])
   barberId  Int
   date      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  barber    Barber   @relation(fields: [barberId], references: [id])
 }
 
 model Subscription {
-  id       Int       @id @default(autoincrement())
-  name     String
-  price    Decimal   @db.Decimal(10, 2)
-  users    User[]
-  benefits Benefit[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  price       Decimal   @db.Decimal(10, 2)
+  stripePrice String?
+  benefits    Benefit[]
+  users       User[]
 }
 
 model Benefit {
