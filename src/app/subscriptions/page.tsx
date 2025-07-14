@@ -1,9 +1,9 @@
 import Header from "@/components/header"
-import SubscriptionCard from "@/components/subscription-card"
 import { authOptions } from "@/lib/auth"
 import { getData } from "@/lib/queries"
 import { getServerSession } from "next-auth"
 import getUserWithProvider from "../_helpers/get-user-with-provider"
+import SubscriptionCard from "@/components/subscription-card"
 
 const SubscriptionsPage = async () => {
   const session = await getServerSession(authOptions)
@@ -15,7 +15,16 @@ const SubscriptionsPage = async () => {
     <>
       <Header user={user} />
       <div className="p-5 lg:px-32">
-        <h2 className="text-xl font-bold">Clube de Cavalheiros</h2>
+        <div className="flex flex-row items-center justify-between">
+          <h2 className="text-xl font-bold">Clube de Cavalheiros</h2>
+          {user?.subscription?.id && (
+            <div className="flex flex-col items-end gap-2">
+              <span className="text-xs text-muted-foreground">
+                Você já possui uma assinatura ativa!
+              </span>
+            </div>
+          )}
+        </div>
         <div>
           <h2 className="mt-3 text-xs font-bold uppercase text-gray-500">
             Assinatura corte
