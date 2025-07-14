@@ -3,20 +3,23 @@
 import { CheckIcon } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card"
 import { Separator } from "./ui/separator"
-import { Subscription, Benefit } from "@prisma/client"
+import { Subscription, Benefit, User } from "@prisma/client"
 import { Button } from "./ui/button"
-import { createStripeCheckoutBySubscription } from "@/app/subscriptions/_stripe/stripe"
+import { createStripeCheckoutBySubscription } from "@/app/subscriptions/_stripe/create-stripe-checkout"
 import { loadStripe } from "@stripe/stripe-js"
+import LoginDialog from "./login-dialog"
+import { useState } from "react"
 
 interface SubscriptionCardProps {
   subscription: Subscription & { benefits: Benefit[] }
-  userId: string | undefined
+  user: User
 }
 
-const SubscriptionCard = ({ subscription, userId }: SubscriptionCardProps) => {
+const SubscriptionCard = ({ subscription, user }: SubscriptionCardProps) => {
+  const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
   const handleSubscriptionClick = async () => {
     const { sessionId } = await createStripeCheckoutBySubscription({
-      userId,
+      userId: user.id,
       subscriptionId: subscription.id,
     })
     if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
@@ -53,7 +56,21 @@ const SubscriptionCard = ({ subscription, userId }: SubscriptionCardProps) => {
         </ul>
       </CardContent>
       <CardFooter className="h-full items-end justify-end">
-        <Button onClick={handleSubscriptionClick}>Assinar plano</Button>
+        <Button
+          onClick={() => {
+            if (!user) {
+              setLoginDialogIsOpen(true)
+            } else {
+              handleSubscriptionClick()
+            }
+          }}
+        >
+          Assinar plano
+        </Button>
+        <LoginDialog
+          isOpen={loginDialogIsOpen}
+          onOpenChange={setLoginDialogIsOpen}
+        />
       </CardFooter>
     </Card>
   )

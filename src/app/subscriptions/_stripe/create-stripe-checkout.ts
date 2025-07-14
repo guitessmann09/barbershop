@@ -53,6 +53,5 @@ export const createStripeCheckoutBySubscription = async ({
       },
     ],
   })
-
   return { sessionId: session.id }
 }

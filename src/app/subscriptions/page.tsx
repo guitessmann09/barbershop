@@ -30,7 +30,7 @@ const SubscriptionsPage = async () => {
                 <SubscriptionCard
                   key={subscription.id}
                   subscription={subscription}
-                  userId={user?.id}
+                  user={user as any}
                 />
               ))}
           </div>
@@ -50,7 +50,7 @@ const SubscriptionsPage = async () => {
                 <SubscriptionCard
                   key={subscription.id}
                   subscription={subscription}
-                  userId={user?.id}
+                  user={user as any}
                 />
               ))}
           </div>
@@ -66,7 +66,7 @@ const SubscriptionsPage = async () => {
                 <SubscriptionCard
                   key={subscription.id}
                   subscription={subscription}
-                  userId={user?.id}
+                  user={user as any}
                 />
               ))}
           </div>
