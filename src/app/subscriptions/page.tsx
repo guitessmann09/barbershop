@@ -26,11 +26,13 @@ const SubscriptionsPage = async () => {
                 (sub) =>
                   sub.name.includes("Corte") && !sub.name.includes("Barba"),
               )
+              .sort((a, b) => Number(a.price) - Number(b.price))
               .map((subscription) => (
                 <SubscriptionCard
                   key={subscription.id}
                   subscription={subscription}
-                  user={user as any}
+                  userId={user?.id as string}
+                  userSubscriptionId={user?.subscription?.id}
                 />
               ))}
           </div>
@@ -46,11 +48,13 @@ const SubscriptionsPage = async () => {
                   sub.name.includes("Barba") &&
                   !sub.name.includes("Corte e Barba"),
               )
+              .sort((a, b) => Number(a.price) - Number(b.price))
               .map((subscription) => (
                 <SubscriptionCard
                   key={subscription.id}
                   subscription={subscription}
-                  user={user as any}
+                  userId={user?.id as string}
+                  userSubscriptionId={user?.subscription?.id}
                 />
               ))}
           </div>
@@ -62,11 +66,13 @@ const SubscriptionsPage = async () => {
           <div className="flex flex-row gap-4 overflow-x-scroll lg:grid lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
             {subscriptions
               .filter((sub) => sub.name.includes("Corte e Barba"))
+              .sort((a, b) => Number(a.price) - Number(b.price))
               .map((subscription) => (
                 <SubscriptionCard
                   key={subscription.id}
                   subscription={subscription}
-                  user={user as any}
+                  userId={user?.id as string}
+                  userSubscriptionId={user?.subscription?.id}
                 />
               ))}
           </div>

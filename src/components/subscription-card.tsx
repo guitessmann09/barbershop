@@ -12,14 +12,19 @@ import { useState } from "react"
 
 interface SubscriptionCardProps {
   subscription: Subscription & { benefits: Benefit[] }
-  user: User
+  userId: string
+  userSubscriptionId: Number | undefined
 }
 
-const SubscriptionCard = ({ subscription, user }: SubscriptionCardProps) => {
+const SubscriptionCard = ({
+  subscription,
+  userSubscriptionId,
+  userId,
+}: SubscriptionCardProps) => {
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
   const handleSubscriptionClick = async () => {
     const { sessionId } = await createStripeCheckoutBySubscription({
-      userId: user.id,
+      userId: userId,
       subscriptionId: subscription.id,
     })
     if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
@@ -33,6 +38,7 @@ const SubscriptionCard = ({ subscription, user }: SubscriptionCardProps) => {
     }
     await stripe.redirectToCheckout({ sessionId })
   }
+
   return (
     <Card className="my-3 flex min-w-[90%] flex-col">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -56,21 +62,25 @@ const SubscriptionCard = ({ subscription, user }: SubscriptionCardProps) => {
         </ul>
       </CardContent>
       <CardFooter className="h-full items-end justify-end">
-        <Button
-          onClick={() => {
-            if (!user) {
-              setLoginDialogIsOpen(true)
-            } else {
-              handleSubscriptionClick()
-            }
-          }}
-        >
-          Assinar plano
-        </Button>
-        <LoginDialog
-          isOpen={loginDialogIsOpen}
-          onOpenChange={setLoginDialogIsOpen}
-        />
+        {!userSubscriptionId && (
+          <>
+            <Button
+              onClick={() => {
+                if (!userId) {
+                  setLoginDialogIsOpen(true)
+                } else {
+                  handleSubscriptionClick()
+                }
+              }}
+            >
+              Assinar plano
+            </Button>
+            <LoginDialog
+              isOpen={loginDialogIsOpen}
+              onOpenChange={setLoginDialogIsOpen}
+            />
+          </>
+        )}
       </CardFooter>
     </Card>
   )
