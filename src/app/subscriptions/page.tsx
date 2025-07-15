@@ -4,6 +4,8 @@ import { getData } from "@/lib/queries"
 import { getServerSession } from "next-auth"
 import getUserWithProvider from "../_helpers/get-user-with-provider"
 import SubscriptionCard from "@/components/subscription-card"
+import Component from "./subscription-dialog"
+import SubscriptionDialog from "./subscription-dialog"
 
 const SubscriptionsPage = async () => {
   const session = await getServerSession(authOptions)
@@ -22,6 +24,7 @@ const SubscriptionsPage = async () => {
               <span className="text-xs text-muted-foreground">
                 Você já possui uma assinatura ativa!
               </span>
+              <SubscriptionDialog userId={user.id} />
             </div>
           )}
         </div>
