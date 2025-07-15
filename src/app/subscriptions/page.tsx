@@ -3,9 +3,8 @@ import { authOptions } from "@/lib/auth"
 import { getData } from "@/lib/queries"
 import { getServerSession } from "next-auth"
 import getUserWithProvider from "../_helpers/get-user-with-provider"
-import SubscriptionCard from "@/components/subscription-card"
-import Component from "./subscription-dialog"
-import SubscriptionDialog from "./subscription-dialog"
+import SubscriptionCard from "./_components/subscription-card"
+import SubscriptionDialog from "./_components/subscription-dialog"
 
 const SubscriptionsPage = async () => {
   const session = await getServerSession(authOptions)

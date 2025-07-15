@@ -19,7 +19,8 @@ export interface UserSubscriptionInfo {
   createdAt?: Date | undefined
   nextBillingDate?: Date | undefined
   currentPeriodStart?: Date | undefined
-  currentPeriodEnd?: Date
+  subscriptionStatus?: String | undefined
+  subscriptionEndDate?: Date | undefined
 }
 
 export const getUserSubscription =
@@ -68,7 +69,8 @@ export const getUserSubscription =
       let createdAt: Date | undefined = undefined
       let nextBillingDate: Date | undefined = undefined
       let currentPeriodStart: Date | undefined = undefined
-      let currentPeriodEnd: Date | undefined = undefined
+      let subscriptionStatus: String | undefined = undefined
+      let subscriptionEndDate: Date | undefined = undefined
 
       try {
         // Busca o customer no Stripe pelo email do usuário
@@ -89,24 +91,30 @@ export const getUserSubscription =
 
           if (subscriptions.data.length > 0) {
             stripeSubscription = subscriptions.data[0]
-            const subscription = stripeSubscription as any
-            if (subscription.created) {
-              createdAt = new Date(subscription.created * 1000)
+            if (stripeSubscription.created) {
+              createdAt = new Date(stripeSubscription.created * 1000)
             }
 
-            if (subscription.current_period_end) {
-              nextBillingDate = new Date(subscription.current_period_end * 1000)
-            }
-
-            if (subscription.current_period_start) {
-              currentPeriodStart = new Date(
-                subscription.current_period_start * 1000,
+            if (stripeSubscription.items.data[0].current_period_end) {
+              nextBillingDate = new Date(
+                stripeSubscription.items.data[0].current_period_end * 1000,
               )
             }
 
-            if (subscription.current_period_end) {
-              currentPeriodEnd = new Date(
-                subscription.current_period_end * 1000,
+            if (stripeSubscription.items.data[0].current_period_start) {
+              currentPeriodStart = new Date(
+                stripeSubscription.items.data[0].current_period_start * 1000,
+              )
+            }
+            if (stripeSubscription.status) {
+              subscriptionStatus = stripeSubscription.status
+            }
+            if (
+              stripeSubscription.cancel_at_period_end &&
+              stripeSubscription.cancel_at
+            ) {
+              subscriptionEndDate = new Date(
+                stripeSubscription.cancel_at * 1000,
               )
             }
           }
@@ -127,7 +135,8 @@ export const getUserSubscription =
         createdAt,
         nextBillingDate,
         currentPeriodStart,
-        currentPeriodEnd,
+        subscriptionStatus,
+        subscriptionEndDate,
       }
     } catch (error) {
       console.error("Erro ao buscar assinatura do usuário:", error)

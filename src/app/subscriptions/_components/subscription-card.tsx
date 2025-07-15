@@ -1,13 +1,19 @@
 "use client"
 
 import { CheckIcon } from "lucide-react"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card"
-import { Separator } from "./ui/separator"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card"
+import { Separator } from "../../../components/ui/separator"
 import { Subscription, Benefit, User } from "@prisma/client"
-import { Button } from "./ui/button"
+import { Button } from "../../../components/ui/button"
 import { createStripeCheckoutBySubscription } from "@/app/subscriptions/_stripe/create-stripe-checkout"
 import { loadStripe } from "@stripe/stripe-js"
-import LoginDialog from "./login-dialog"
+import LoginDialog from "../../../components/login-dialog"
 import { useState } from "react"
 
 interface SubscriptionCardProps {
