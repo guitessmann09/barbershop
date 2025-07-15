@@ -29,6 +29,7 @@ import { getFormattedCurrency } from "../../_helpers/format-currency"
 import { getUserSubscription } from "../../_actions/get-user-subscription"
 import { UserSubscriptionInfo } from "@/app/_actions/get-user-subscription"
 import Spinner from "@/components/ui/spinner"
+import { cancelSubscription } from "../_stripe/cancel-subscription"
 
 interface SubscriptionInfoProps {
   userId?: string
@@ -58,17 +59,12 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
 
   console.log(subscriptionData)
 
-  const handleCancelSubscription = async () => {
-    setIsCancelling(true)
-
-    // Simular chamada da API
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    setIsCancelling(false)
-    setIsOpen(false)
-
-    // Aqui você implementaria a lógica real de cancelamento
-    alert("Assinatura cancelada com sucesso!")
+  const handleCancelClick = async () => {
+    if (!userId || !subscriptionData?.stripeSubscription.id) return
+    await cancelSubscription({
+      userId,
+      stripeSubscriptionId: subscriptionData.stripeSubscription.id,
+    })
   }
 
   return (
@@ -197,8 +193,7 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
                 </AlertDialogCancel>
                 {!subscriptionData?.subscriptionEndDate && (
                   <AlertDialogAction
-                    onClick={handleCancelSubscription}
-                    disabled={isCancelling}
+                    onClick={handleCancelClick}
                     className="w-full bg-red-600 hover:bg-red-700 sm:w-auto"
                   >
                     {isCancelling ? "Cancelando..." : "Cancelar Assinatura"}
