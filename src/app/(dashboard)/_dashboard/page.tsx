@@ -12,7 +12,7 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Header from "@/components/header"
 import getUserWithProvider from "../../_helpers/get-user-with-provider"
-import verifyProvider from "../../_helpers/verifyProvider"
+import verifyProvider from "../../_helpers/verify-provider"
 
 const Dashboard = async () => {
   const session = await getServerSession(authOptions)

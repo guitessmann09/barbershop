@@ -73,18 +73,13 @@ export const getUserSubscription =
       let subscriptionEndDate: Date | undefined = undefined
 
       try {
-        // Busca o customer no Stripe pelo email do usuário
-        const customers = await stripe.customers.list({
-          email: user.email,
-          limit: 1,
-        })
-
-        if (customers.data.length > 0) {
-          stripeCustomer = customers.data[0]
+        if (user.stripeUserId) {
+          // Busca o customer no Stripe pelo ID armazenado
+          stripeCustomer = await stripe.customers.retrieve(user.stripeUserId)
 
           // Busca as assinaturas ativas do customer
           const subscriptions = await stripe.subscriptions.list({
-            customer: stripeCustomer.id,
+            customer: user.stripeUserId,
             status: "active",
             limit: 1,
           })

@@ -16,6 +16,7 @@ const getUserWithProvider = async ({ userId }: getUserProps) => {
       image: true,
       subscription: true,
       accounts: true,
+      stripeUserId: true,
     },
   })
   return user

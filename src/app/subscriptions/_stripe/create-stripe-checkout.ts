@@ -41,9 +41,33 @@ export const createStripeCheckoutBySubscription = async ({
     apiVersion: "2025-06-30.basil",
   })
 
+  let customerId: string | undefined
+
+  if (user?.stripeUserId) {
+    // Usa o customer existente
+    customerId = user.stripeUserId
+  } else {
+    // Cria um novo customer no Stripe
+    const customer = await stripe.customers.create({
+      email: user?.email ?? undefined,
+      name: user?.name ?? undefined,
+      metadata: {
+        userId: userId,
+      },
+    })
+    customerId = customer.id
+
+    // Atualiza o usuário com o stripeUserId
+    await db.user.update({
+      where: { id: userId },
+      data: { stripeUserId: customerId },
+    })
+  }
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "subscription",
+    customer: customerId,
     success_url: "http://localhost:3000",
     cancel_url: "http://localhost:3000/subscriptions",
     metadata: {

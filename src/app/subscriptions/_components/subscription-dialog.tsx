@@ -57,14 +57,21 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
     setSubscriptionData(subscription)
   }
 
-  console.log(subscriptionData)
-
   const handleCancelClick = async () => {
     if (!userId || !subscriptionData?.stripeSubscription.id) return
-    await cancelSubscription({
-      userId,
-      stripeSubscriptionId: subscriptionData.stripeSubscription.id,
-    })
+    try {
+      setIsCancelling(true)
+      await cancelSubscription({
+        userId,
+        stripeSubscriptionId: subscriptionData.stripeSubscription.id,
+      })
+      // Fecha o dialog
+      setIsOpen(false)
+    } catch (error) {
+      console.error("Erro ao cancelar assinatura:", error)
+    } finally {
+      setIsCancelling(false)
+    }
   }
 
   return (
