@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import Stripe from "stripe"
 
 interface CreateStripeCancelSubscriptionProps {
@@ -28,5 +29,6 @@ export async function cancelSubscription({
     },
   )
 
+  revalidatePath("/subscriptions")
   return { canceledSubscriptionId: canceledSubscription.id }
 }

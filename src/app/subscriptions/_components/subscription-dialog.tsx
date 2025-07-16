@@ -65,12 +65,11 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
         userId,
         stripeSubscriptionId: subscriptionData.stripeSubscription.id,
       })
-      // Fecha o dialog
-      setIsOpen(false)
     } catch (error) {
       console.error("Erro ao cancelar assinatura:", error)
     } finally {
       setIsCancelling(false)
+      fetchSubscriptionData()
     }
   }
 
@@ -94,6 +93,23 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
               preferências.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          {subscriptionData?.subscriptionEndDate && (
+            <div className="border-primary/20 bg-primary/5 rounded-lg border p-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="mt-0.5 h-4 w-4 text-primary" />
+                <div className="text-sm">
+                  <p className="font-medium text-primary">
+                    Assinatura cancelada!
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    Sua assinatura foi cancelada. Você ainda terá acesso aos
+                    benefícios até o final do período vigente.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="flex items-center justify-center py-10">
@@ -199,12 +215,12 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
                   Fechar
                 </AlertDialogCancel>
                 {!subscriptionData?.subscriptionEndDate && (
-                  <AlertDialogAction
+                  <Button
                     onClick={handleCancelClick}
                     className="w-full bg-red-600 hover:bg-red-700 sm:w-auto"
                   >
                     {isCancelling ? "Cancelando..." : "Cancelar Assinatura"}
-                  </AlertDialogAction>
+                  </Button>
                 )}
               </AlertDialogFooter>
             </>
