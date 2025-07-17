@@ -15,6 +15,7 @@ import { createStripeCheckoutBySubscription } from "@/app/subscriptions/_stripe/
 import { loadStripe } from "@stripe/stripe-js"
 import LoginDialog from "../../../components/login-dialog"
 import { useState } from "react"
+import Spinner from "@/components/ui/spinner"
 
 interface SubscriptionCardProps {
   subscription: Subscription & { benefits: Benefit[] }
@@ -28,7 +29,9 @@ const SubscriptionCard = ({
   userId,
 }: SubscriptionCardProps) => {
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const handleSubscriptionClick = async () => {
+    setIsLoading(true)
     const { sessionId } = await createStripeCheckoutBySubscription({
       userId: userId,
       subscriptionId: subscription.id,
@@ -78,8 +81,14 @@ const SubscriptionCard = ({
                   handleSubscriptionClick()
                 }
               }}
+              disabled={isLoading}
+              className={`bg-${isLoading ? "secondary" : "primary"}`}
             >
-              Assinar plano
+              {isLoading ? (
+                <Spinner height={5} width={5} />
+              ) : (
+                <span>Assinar plano</span>
+              )}
             </Button>
             <LoginDialog
               isOpen={loginDialogIsOpen}

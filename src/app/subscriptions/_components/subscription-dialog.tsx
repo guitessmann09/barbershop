@@ -113,7 +113,7 @@ const SubscriptionDialog = ({ userId }: SubscriptionInfoProps) => {
 
           {loading ? (
             <div className="flex items-center justify-center py-10">
-              <Spinner />
+              <Spinner width={8} height={8} />
             </div>
           ) : (
             <>

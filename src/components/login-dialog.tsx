@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "./ui/dialog"
 import { signIn } from "next-auth/react"
+import { useState } from "react"
+import Spinner from "./ui/spinner"
 
 const LoginDialog = ({
   isOpen,
@@ -18,7 +20,9 @@ const LoginDialog = ({
   isOpen: boolean
   onOpenChange: (open: boolean) => void
 }) => {
+  const [isLoading, setIsLoading] = useState(false)
   const handleLoginWithGoogle = async () => {
+    setIsLoading(true)
     await signIn("google")
   }
   return (
@@ -36,9 +40,23 @@ const LoginDialog = ({
           variant="outline"
           className="gap-2 rounded-xl font-bold"
           onClick={handleLoginWithGoogle}
+          disabled={isLoading}
         >
-          <Image src="/google-icon.svg" alt="Google" width={20} height={20} />
-          Google
+          {isLoading ? (
+            <div>
+              <Spinner width={5} height={5} />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              <Image
+                src="/google-icon.svg"
+                alt="Google"
+                width={20}
+                height={20}
+              />
+              Google
+            </div>
+          )}
         </Button>
       </DialogContent>
     </Dialog>

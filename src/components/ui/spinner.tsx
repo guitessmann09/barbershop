@@ -1,6 +1,13 @@
-const Spinner = () => {
+interface SpinnerProps {
+  width: number
+  height: number
+}
+
+const Spinner = ({ width, height }: SpinnerProps) => {
   return (
-    <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+    <div
+      className={`h-${height} w-${width} animate-spin rounded-full border-b-2 border-primary`}
+    />
   )
 }
 
