@@ -16,7 +16,14 @@ import {
 } from "./ui/carousel"
 import { BookingFormData, BarberWithBookings } from "@/types/barbershop"
 import { Service, Barber } from "@prisma/client"
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
+import {
+  calculateServiceDiscount,
+  calculateFinalPrice,
+} from "@/app/_helpers/get-discount"
+import { getUserData, UserData } from "@/app/_actions/get-user-data"
+import { calculateDiscountAction } from "@/app/_actions/calculate-discount"
 
 const TIME_LIST = [
   "08:00",
@@ -57,6 +64,53 @@ export function BookingForm({
   availableDays,
 }: BookingFormProps) {
   const { selectedDay, selectedTime, selectedBarber } = formData
+  const { data: session } = useSession()
+  const [userData, setUserData] = useState<UserData | null>(null)
+  const [discountInfo, setDiscountInfo] = useState<{
+    discountPercentage: number
+    isFree: boolean
+    reason: string
+  } | null>(null)
+
+  // Buscar dados do usuário quando a sessão estiver disponível
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session?.user?.id) {
+        try {
+          const data = await getUserData()
+          setUserData(data)
+        } catch (error) {
+          console.error("Erro ao buscar dados do usuário:", error)
+        }
+      }
+    }
+
+    fetchUserData()
+  }, [session?.user?.id])
+
+  // Calcular desconto quando o usuário e data são selecionados
+  useEffect(() => {
+    const calculateDiscount = async () => {
+      if (!userData || !selectedDay) {
+        setDiscountInfo(null)
+        return
+      }
+
+      try {
+        const discount = await calculateDiscountAction(
+          service,
+          userData,
+          selectedDay,
+        )
+        setDiscountInfo(discount)
+      } catch (error) {
+        console.error("Erro ao calcular desconto:", error)
+        setDiscountInfo(null)
+      }
+    }
+
+    calculateDiscount()
+  }, [userData, selectedDay, service])
 
   const availableBarbers = useMemo(() => {
     if (!selectedDay || !selectedTime) return []
@@ -112,6 +166,11 @@ export function BookingForm({
 
     return TIME_LIST
   }, [selectedDay])
+
+  const originalPrice = Number(service.price)
+  const finalPrice = discountInfo
+    ? calculateFinalPrice(originalPrice, discountInfo)
+    : originalPrice
 
   return (
     <>
@@ -223,13 +282,35 @@ export function BookingForm({
             <CardContent className="space-y-3 p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold">{service.name}</h2>
-                <p className="text-sm font-bold">
-                  {Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(Number(service.price))}
-                </p>
+                <div className="flex flex-col items-end">
+                  {discountInfo && discountInfo.discountPercentage > 0 && (
+                    <p className="text-xs text-muted-foreground line-through">
+                      {Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(originalPrice)}
+                    </p>
+                  )}
+                  <p className="text-sm font-bold">
+                    {Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(finalPrice)}
+                  </p>
+                </div>
               </div>
+
+              {discountInfo && discountInfo.discountPercentage > 0 && (
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm text-muted-foreground">Desconto</h2>
+                  <div className="flex flex-col items-end">
+                    <p className="text-sm font-bold text-green-600">
+                      -{discountInfo.discountPercentage}%
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
                 <h2 className="text-sm text-muted-foreground">Data</h2>
                 <p className="text-sm">

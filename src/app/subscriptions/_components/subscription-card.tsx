@@ -68,7 +68,7 @@ const SubscriptionCard = ({
         </ul>
       </CardContent>
       <CardFooter className="h-full items-end justify-end">
-        {!userSubscriptionId && (
+        {!userSubscriptionId ? (
           <>
             <Button
               onClick={() => {
@@ -86,7 +86,11 @@ const SubscriptionCard = ({
               onOpenChange={setLoginDialogIsOpen}
             />
           </>
-        )}
+        ) : userSubscriptionId === subscription.id ? (
+          <Button variant="secondary" className="cursor-default">
+            Seu plano
+          </Button>
+        ) : null}
       </CardFooter>
     </Card>
   )

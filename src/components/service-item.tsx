@@ -13,6 +13,7 @@ import { BookingForm } from "./booking-form"
 import { ServiceItemProps, BookingFormData } from "@/types/barbershop"
 import { set } from "date-fns"
 import LoginDialog from "./login-dialog"
+import getUserWithProvider from "@/app/_helpers/get-user-with-provider"
 
 const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
   const router = useRouter()
