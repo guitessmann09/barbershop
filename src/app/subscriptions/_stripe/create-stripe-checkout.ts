@@ -2,6 +2,7 @@
 
 import getUserWithProvider from "@/app/_helpers/get-user-with-provider"
 import { db } from "@/lib/prisma"
+import { headers } from "next/headers"
 import Stripe from "stripe"
 
 interface CreateStripeCheckoutBySubscriptionProps {
@@ -13,6 +14,8 @@ export const createStripeCheckoutBySubscription = async ({
   userId,
   subscriptionId,
 }: CreateStripeCheckoutBySubscriptionProps) => {
+  const origin = (await headers()).get("origin") || ""
+
   if (!userId) {
     throw new Error("Não autorizado")
   }
@@ -68,8 +71,8 @@ export const createStripeCheckoutBySubscription = async ({
     payment_method_types: ["card"],
     mode: "subscription",
     customer: customerId,
-    success_url: "http://localhost:3000",
-    cancel_url: "http://localhost:3000/subscriptions",
+    success_url: `${origin}/subscriptions/`,
+    cancel_url: `${origin}/subscriptions/`,
     metadata: {
       userId: userId,
       subscriptionId: subscriptionId,
