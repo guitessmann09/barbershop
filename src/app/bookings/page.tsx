@@ -1,7 +1,5 @@
 import BookingItem from "@/components/booking-item"
 import Header from "@/components/header"
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { getData } from "@/lib/queries"
 import {
@@ -9,20 +7,19 @@ import {
   getCompletedBookings,
 } from "@/app/_constants/get-bookings"
 import getUserWithProvider from "../_helpers/get-user-with-provider"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { getUserData } from "../_actions/get-user-data"
 
 const Bookings = async () => {
-  const session = await getServerSession(authOptions)
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
   if (!session?.user) {
     redirect("/")
   }
 
-  if (session.user.provider === "credentials") {
-    redirect("/dashboard")
-  }
-
-  const user = session?.user?.id
-    ? await getUserWithProvider({ userId: session.user.id })
-    : null
+  const user = session ? await getUserData(session.session) : null
 
   const { bookings, services, barbers } = await getData()
 
@@ -31,7 +28,7 @@ const Bookings = async () => {
 
   return (
     <div>
-      <Header user={user} />
+      <Header {...user} />
       <div className="p-5 lg:px-32">
         <div>
           <h2 className="text-xl font-bold">Agendamentos</h2>

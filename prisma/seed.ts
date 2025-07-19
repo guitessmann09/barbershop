@@ -180,21 +180,21 @@ async function seedDataBase() {
         email: "joao@dandysden.com",
         password: await bcrypt.hash("123456", 10),
         imageURL:
-          "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
+          "https://yw0ygga3t5.ufs.sh/f/4mWc2IykpUTZpy4mGhdQcTrivS9CuHoe4ZR2ytPJYzAWjmX5",
       },
       {
         name: "Pedro Santos",
         email: "pedro@dandysden.com",
         password: await bcrypt.hash("123456", 10),
         imageURL:
-          "https://utfs.io/f/c9b4c1f8-1d3f-4b6c-a5c8-6e97dc7d8346-1kgxo7.png",
+          "https://yw0ygga3t5.ufs.sh/f/4mWc2IykpUTZikrijT1bUzivhwcWng9LrXHTSDuGx5BfmbEK",
       },
       {
         name: "Carlos Oliveira",
         email: "carlos@dandysden.com",
         password: await bcrypt.hash("123456", 10),
         imageURL:
-          "https://utfs.io/f/5c89f046-e4bf-4994-a9f6-e54a2b36302e-1kgxo7.png",
+          "https://yw0ygga3t5.ufs.sh/f/4mWc2IykpUTZDlYKZ3IRBIzdbgK0yh2ZQwufPOE9pl46FNJa",
       },
     ]
 

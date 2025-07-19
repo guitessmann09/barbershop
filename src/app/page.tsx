@@ -1,32 +1,30 @@
 import Header from "@/components/header"
-import BookingItem from "@/components/booking-item"
 import ServiceItem from "@/components/service-item"
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
 import { getData } from "@/lib/queries"
 import { getConfirmedBookings } from "@/app/_constants/get-bookings"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import Test from "@/components/home-section"
 import AnimatedBanner from "@/components/banner-animated"
-import getUserWithProvider from "./_helpers/get-user-with-provider"
+import { getUserData } from "./_actions/get-user-data"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import HomeSection from "@/components/home-section"
+import BookingItem from "@/components/booking-item"
 
 const Home = async () => {
-  const session = await getServerSession(authOptions)
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
+  const user = session ? await getUserData(session.session) : null
   const { services, barbers, bookings, availableDays } = await getData()
 
   const confirmedBookings = await getConfirmedBookings(bookings)
 
-  const user = session?.user?.id
-    ? await getUserWithProvider({ userId: session.user.id })
-    : null
-
   return (
     <div>
-      <Header user={user} />
+      <Header {...(user ?? {})} />
       <div className="p-5 md:px-5 md:pt-0 lg:px-32">
-        <Test
-          session={session}
+        <HomeSection
           className="hidden md:block"
           confirmedBookings={confirmedBookings}
           services={services}

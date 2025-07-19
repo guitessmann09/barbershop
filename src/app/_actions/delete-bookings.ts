@@ -1,15 +1,19 @@
 "use server"
 
 import { db } from "@/lib/prisma"
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
+import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
+import { getUserData } from "./get-user-data"
 interface DeleteBookingParams {
   id: string
 }
 
 export const deleteBooking = async (params: DeleteBookingParams) => {
-  const user = await getServerSession(authOptions)
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
+  const user = session ? await getUserData(session.session) : null
   if (!user) {
     throw new Error("Unauthorized")
   }

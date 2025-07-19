@@ -17,13 +17,13 @@ import {
 import { BookingFormData, BarberWithBookings } from "@/types/barbershop"
 import { Service, Barber } from "@prisma/client"
 import { useMemo, useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
 import {
   calculateServiceDiscount,
   calculateFinalPrice,
 } from "@/app/_helpers/get-discount"
 import { getUserData, UserData } from "@/app/_actions/get-user-data"
 import { calculateDiscountAction } from "@/app/_actions/calculate-discount"
+import { useSession } from "@/app/_providers/auth-client"
 
 const TIME_LIST = [
   "08:00",
@@ -64,7 +64,6 @@ export function BookingForm({
   availableDays,
 }: BookingFormProps) {
   const { selectedDay, selectedTime, selectedBarber } = formData
-  const { data: session } = useSession()
   const [userData, setUserData] = useState<UserData | null>(null)
   const [discountInfo, setDiscountInfo] = useState<{
     discountPercentage: number
@@ -72,12 +71,14 @@ export function BookingForm({
     reason: string
   } | null>(null)
 
+  const session = useSession()
+
   // Buscar dados do usuário quando a sessão estiver disponível
   useEffect(() => {
     const fetchUserData = async () => {
-      if (session?.user?.id) {
+      if (session?.data?.session) {
         try {
-          const data = await getUserData()
+          const data = await getUserData(session.data.session)
           setUserData(data)
         } catch (error) {
           console.error("Erro ao buscar dados do usuário:", error)
@@ -86,7 +87,7 @@ export function BookingForm({
     }
 
     fetchUserData()
-  }, [session?.user?.id])
+  }, [session?.data?.session])
 
   // Calcular desconto quando o usuário e data são selecionados
   useEffect(() => {

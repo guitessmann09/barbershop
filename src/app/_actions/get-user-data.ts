@@ -1,8 +1,7 @@
 "use server"
 
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/prisma"
+import { Session } from "better-auth"
 
 export interface UserData {
   id: string
@@ -11,7 +10,7 @@ export interface UserData {
   phone: string | null
   createdAt: Date
   updatedAt: Date
-  emailVerified: Date | null
+  emailVerified: boolean
   image: string | null
   subscriptionID: number | null
   stripeUserId: string | null
@@ -22,15 +21,16 @@ export interface UserData {
   } | null
 }
 
-export const getUserData = async (): Promise<UserData | null> => {
+export const getUserData = async (
+  session: Session,
+): Promise<UserData | null> => {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    if (!session.userId) {
       return null
     }
 
     const user = await db.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: session.userId },
       include: {
         subscription: true,
       },

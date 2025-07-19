@@ -7,14 +7,12 @@ import {
   LogIn,
   LogOut,
   MenuIcon,
-  Settings,
   HomeIcon,
   StarIcon,
 } from "lucide-react"
 import { Sheet, SheetTrigger } from "./ui/sheet"
 import SidebarSheet from "./sidebar-sheet"
 import Link from "next/link"
-import { signOut } from "next-auth/react"
 import LoginDialog from "./login-dialog"
 import { useState } from "react"
 import {
@@ -23,18 +21,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import { Account, Subscription } from "@prisma/client"
+import { UserData } from "@/app/_actions/get-user-data"
+import { signOut, useSession } from "@/app/_providers/auth-client"
 
-interface HeaderProps {
-  user: {
-    name: string | null
-    email: string
-    image: string | null
-    subscription: Subscription | null
-  } | null
-}
-
-const Header = ({ user }: HeaderProps) => {
+const Header = (user: Partial<UserData>) => {
+  const session = useSession()
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
   return (
     <Card className="border-none bg-transparent">
@@ -48,7 +39,7 @@ const Header = ({ user }: HeaderProps) => {
               <MenuIcon size={18} />
             </Button>
           </SheetTrigger>
-          <SidebarSheet />
+          <SidebarSheet {...user} />
         </Sheet>
         <div className="hidden lg:flex lg:gap-4">
           <Button
@@ -61,7 +52,7 @@ const Header = ({ user }: HeaderProps) => {
               <span>Assinaturas</span>
             </Link>
           </Button>
-          {user ? (
+          {session.data?.user.id ? (
             <div className="flex items-center gap-4 font-semibold">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

@@ -1,28 +1,33 @@
 import { format } from "date-fns"
 import { ptBR, se } from "date-fns/locale"
-import { Session } from "next-auth"
 import { ClassValue } from "clsx"
 import { cn } from "@/lib/utils"
 import { Booking, Service, Barber } from "@prisma/client"
 import BarberCard from "./barber-card"
 import BookingComponent from "./bookings-component"
 import AnimatedBanner from "./banner-animated"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { getUserData } from "@/app/_actions/get-user-data"
 
-interface TestProps {
-  session: Session | null
+interface HomeSectionProps {
   className?: ClassValue
   confirmedBookings: Booking[]
   services: Service[]
   barbers: Barber[]
 }
 
-const Test = ({
-  session,
+const HomeSection = async ({
   className,
   confirmedBookings,
   services,
   barbers,
-}: TestProps) => {
+}: HomeSectionProps) => {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
+
+  const user = session ? await getUserData(session.session) : null
   return (
     <div
       className={cn(
@@ -45,15 +50,20 @@ const Test = ({
             {format(new Date(), "MMMM", { locale: ptBR })}
           </span>
           <div>
-            {session ? (
+            {session || confirmedBookings.length >= 0 ? (
               <BookingComponent
-                session={session}
                 confirmedBookings={confirmedBookings}
                 services={services}
                 barbers={barbers}
               />
-            ) : (
+            ) : !user?.subscriptionID || !session ? (
               <AnimatedBanner />
+            ) : (
+              <div className="mt-3">
+                <p className="text-sm text-gray-500">
+                  Você ainda não tem agendamentos
+                </p>
+              </div>
             )}
           </div>
         </div>
@@ -77,4 +87,4 @@ const Test = ({
   )
 }
 
-export default Test
+export default HomeSection

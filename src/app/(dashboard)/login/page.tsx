@@ -1,6 +1,5 @@
 "use client"
 
-import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -18,6 +17,7 @@ import { HomeIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { toast } from "sonner"
+import { signIn } from "@/app/_providers/auth-client"
 
 const BarberLogin = () => {
   const router = useRouter()
@@ -25,26 +25,26 @@ const BarberLogin = () => {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setLoading(true)
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-      callbackUrl: "/dashboard",
-    })
+  //   const res = await signIn("credentials", {
+  //     redirect: false,
+  //     email,
+  //     password,
+  //     callbackUrl: "/dashboard",
+  //   })
 
-    setLoading(false)
+  //   setLoading(false)
 
-    if (res?.error) {
-      toast.error("Credenciais inválidas")
-      console.log(res.error)
-    } else {
-      router.push("/dashboard")
-    }
-  }
+  //   if (res?.error) {
+  //     toast.error("Credenciais inválidas")
+  //     console.log(res.error)
+  //   } else {
+  //     router.push("/dashboard")
+  //   }
+  // }
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
@@ -66,7 +66,7 @@ const BarberLogin = () => {
             Insira suas credenciais para acessar o sistema.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
+        <form>
           <CardContent>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">

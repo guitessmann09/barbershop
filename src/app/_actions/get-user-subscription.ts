@@ -1,8 +1,8 @@
 "use server"
 
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { db } from "@/lib/prisma"
+import { headers } from "next/headers"
 import Stripe from "stripe"
 
 export interface UserSubscriptionInfo {
@@ -26,7 +26,9 @@ export interface UserSubscriptionInfo {
 export const getUserSubscription =
   async (): Promise<UserSubscriptionInfo | null> => {
     try {
-      const session = await getServerSession(authOptions)
+      const session = await auth.api.getSession({
+        headers: await headers(),
+      })
       if (!session?.user?.id) {
         throw new Error("Não autorizado")
       }

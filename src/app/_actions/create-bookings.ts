@@ -1,8 +1,9 @@
 "use server"
 
+import { auth } from "@/lib/auth"
 import { db } from "@/lib/prisma"
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
+import { headers } from "next/headers"
+import { getUserData } from "./get-user-data"
 
 interface CreateBookingParams {
   serviceId: string
@@ -11,15 +12,18 @@ interface CreateBookingParams {
 }
 
 export const createBooking = async (params: CreateBookingParams) => {
-  const user = await getServerSession(authOptions)
-  if (!user) {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
+  const user = session ? await getUserData(session.session) : null
+  if (user === null) {
     throw new Error("Unauthorized")
   }
 
   await db.booking.create({
     data: {
       ...params,
-      userId: (user as any).user.id,
+      userId: user.id,
     },
   })
 }

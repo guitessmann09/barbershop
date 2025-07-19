@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import AuthProvider from "./providers/auth"
 import { Toaster } from "sonner"
 import Footer from "@/components/footer"
 
@@ -23,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.className} flex h-screen flex-col`}>
-        <AuthProvider>{children}</AuthProvider>
+        {children}
         <Toaster />
         <Footer />
       </body>

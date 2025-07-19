@@ -5,7 +5,6 @@ import {
   HomeIcon,
   LogInIcon,
   LogOutIcon,
-  Settings,
   StarIcon,
 } from "lucide-react"
 import {
@@ -19,13 +18,12 @@ import Link from "next/link"
 import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "./ui/dialog"
 import LoginDialog from "./login-dialog"
-import { useSession } from "next-auth/react"
 import LogoutDialog from "./logout-dialog"
 import Image from "next/image"
 import { useState } from "react"
+import { UserData } from "@/app/_actions/get-user-data"
 
-const SidebarSheet = () => {
-  const { data } = useSession()
+const SidebarSheet = (user: Partial<UserData>) => {
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
 
   return (
@@ -33,21 +31,21 @@ const SidebarSheet = () => {
       <SheetHeader className="pb-6 text-start">
         <SheetTitle className="text-lg font-normal">Menu</SheetTitle>
 
-        {data?.user ? (
+        {user ? (
           <SheetDescription className="flex items-center gap-3 pt-6">
             <div className="relative h-12 w-12">
               <Image
-                src={data?.user?.image ?? ""}
-                alt={data?.user?.name ?? ""}
+                src={user?.image ?? ""}
+                alt={user?.name ?? ""}
                 fill
                 className="rounded-full border-2 border-primary object-cover"
               />
             </div>
             <div>
               <p className="text-base font-bold text-foreground">
-                {data?.user?.name}
+                {user?.name}
               </p>
-              <p className="text-xs text-foreground">{data?.user?.email}</p>
+              <p className="text-xs text-foreground">{user?.email}</p>
             </div>
           </SheetDescription>
         ) : (
@@ -93,17 +91,13 @@ const SidebarSheet = () => {
             <p className="text-sm font-normal">Assinaturas</p>
           </Link>
         </Button>
-        {data?.user && (
+        {user && (
           <Button
             variant="ghost"
             className="flex items-center justify-start gap-2"
           >
             <Link
-              href={
-                data?.user?.provider === "credentials"
-                  ? "/dashboard"
-                  : "/bookings"
-              }
+              href={"/bookings"}
               className="flex w-full items-center justify-start gap-2"
             >
               <CalendarIcon size={18} />
@@ -111,20 +105,8 @@ const SidebarSheet = () => {
             </Link>
           </Button>
         )}
-        {data?.user?.provider === "credentials" && (
-          <Button
-            variant="ghost"
-            className="flex w-full items-center justify-start gap-2"
-            asChild
-          >
-            <Link href="/settings">
-              <Settings size={18} />
-              <p className="text-sm">Configurações</p>
-            </Link>
-          </Button>
-        )}
       </div>
-      {data?.user && (
+      {user && (
         <div className="border-t">
           <Dialog>
             <DialogTrigger asChild>

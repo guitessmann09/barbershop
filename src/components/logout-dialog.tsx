@@ -4,12 +4,11 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog"
 import { Button } from "./ui/button"
-import { signOut } from "next-auth/react"
+import { signOut } from "@/app/_providers/auth-client"
 
 const LogoutDialog = () => {
   return (

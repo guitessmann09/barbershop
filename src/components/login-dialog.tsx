@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog"
-import { signIn } from "next-auth/react"
 import { useState } from "react"
 import Spinner from "./ui/spinner"
+import { signInWithGoogle } from "@/app/(dashboard)/login/google-login"
 
 const LoginDialog = ({
   isOpen,
@@ -23,7 +23,7 @@ const LoginDialog = ({
   const [isLoading, setIsLoading] = useState(false)
   const handleLoginWithGoogle = async () => {
     setIsLoading(true)
-    await signIn("google")
+    signInWithGoogle()
   }
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

@@ -1,11 +1,13 @@
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { Booking } from "@prisma/client"
-import { getServerSession } from "next-auth"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { headers } from "next/headers"
 
 const getUserBookings = async (bookings: Booking[]) => {
-  const session = await getServerSession(authOptions)
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
   return bookings.filter(
     (booking) => booking.userId === (session as any)?.user.id,
   )

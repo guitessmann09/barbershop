@@ -6,14 +6,13 @@ import { Button } from "./ui/button"
 import { Sheet, SheetContent } from "./ui/sheet"
 import { useState } from "react"
 import { createBooking } from "@/app/_actions/create-bookings"
-import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { BookingForm } from "./booking-form"
 import { ServiceItemProps, BookingFormData } from "@/types/barbershop"
 import { set } from "date-fns"
 import LoginDialog from "./login-dialog"
-import getUserWithProvider from "@/app/_helpers/get-user-with-provider"
+import { useSession } from "@/app/_providers/auth-client"
 
 const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
   const router = useRouter()

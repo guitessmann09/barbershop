@@ -1,20 +1,22 @@
 import Header from "@/components/header"
-import { authOptions } from "@/lib/auth"
 import { getData } from "@/lib/queries"
-import { getServerSession } from "next-auth"
-import getUserWithProvider from "../_helpers/get-user-with-provider"
+
 import SubscriptionCard from "./_components/subscription-card"
 import SubscriptionDialog from "./_components/subscription-dialog"
+import { getUserData } from "../_actions/get-user-data"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 
 const SubscriptionsPage = async () => {
-  const session = await getServerSession(authOptions)
+  const session = await auth.api.getSession({
+    headers: headers(),
+  })
+
+  const user = session ? await getUserData(session.session) : null
   const { subscriptions } = await getData()
-  const user = session?.user?.id
-    ? await getUserWithProvider({ userId: session.user.id })
-    : null
   return (
     <>
-      <Header user={user} />
+      <Header {...user} />
       <div className="p-5 lg:px-32">
         <div className="flex flex-row items-center justify-between">
           <h2 className="text-xl font-bold">Clube de Cavalheiros</h2>
