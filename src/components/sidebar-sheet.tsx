@@ -4,7 +4,7 @@ import {
   CalendarIcon,
   HomeIcon,
   LogInIcon,
-  LogOutIcon,
+  LogOut,
   StarIcon,
 } from "lucide-react"
 import {
@@ -21,11 +21,13 @@ import LoginDialog from "./login-dialog"
 import LogoutDialog from "./logout-dialog"
 import Image from "next/image"
 import { useState } from "react"
-import { UserData } from "@/app/_actions/get-user-data"
+import { useSession } from "@/app/_providers/auth-client"
 
-const SidebarSheet = (user: Partial<UserData>) => {
+const SidebarSheet = () => {
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
-
+  const [logOutDialogIsOpen, setLogOutDialogIsOpen] = useState(false)
+  const session = useSession()
+  const user = session.data?.user
   return (
     <SheetContent className="overflow-y-auto px-5 py-3">
       <SheetHeader className="pb-6 text-start">
@@ -107,16 +109,21 @@ const SidebarSheet = (user: Partial<UserData>) => {
         )}
       </div>
       {user && (
-        <div className="border-t">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="my-6 w-full justify-start">
-                <LogOutIcon size={18} />
-                <p>Sair da conta</p>
-              </Button>
-            </DialogTrigger>
-            <LogoutDialog />
-          </Dialog>
+        <div className="border-t pt-6">
+          <Button
+            variant="ghost"
+            className="flex w-full items-center justify-start gap-2"
+            onClick={() => {
+              setLogOutDialogIsOpen(true)
+            }}
+          >
+            <LogOut size={18} />
+            <span>Sair</span>
+          </Button>
+          <LogoutDialog
+            isOpen={logOutDialogIsOpen}
+            onOpenChange={setLogOutDialogIsOpen}
+          />
         </div>
       )}
     </SheetContent>

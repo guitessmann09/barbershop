@@ -18,49 +18,44 @@ export interface UserData {
     id: number
     name: string
     price: number
-  } | null
+  }
 }
 
 export const getUserData = async (
   session: Session,
-): Promise<UserData | null> => {
-  try {
-    if (!session.userId) {
-      return null
-    }
+): Promise<UserData | undefined> => {
+  if (!session.userId) {
+    throw new Error("Unauthorized")
+  }
 
-    const user = await db.user.findUnique({
-      where: { id: session.userId },
-      include: {
-        subscription: true,
-      },
-    })
+  const user = await db.user.findUnique({
+    where: { id: session.userId },
+    include: {
+      subscription: true,
+    },
+  })
 
-    if (!user) {
-      return null
-    }
+  if (!user) {
+    throw new Error("Unauthorized")
+  }
 
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      emailVerified: user.emailVerified,
-      image: user.image,
-      subscriptionID: user.subscriptionID,
-      stripeUserId: user.stripeUserId,
-      subscription: user.subscription
-        ? {
-            id: user.subscription.id,
-            name: user.subscription.name,
-            price: Number(user.subscription.price),
-          }
-        : null,
-    }
-  } catch (error) {
-    console.error("Erro ao buscar dados do usuário:", error)
-    return null
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    emailVerified: user.emailVerified,
+    image: user.image,
+    subscriptionID: user.subscriptionID,
+    stripeUserId: user.stripeUserId,
+    subscription: user.subscription
+      ? {
+          id: user.subscription.id,
+          name: user.subscription.name,
+          price: Number(user.subscription.price),
+        }
+      : undefined,
   }
 }

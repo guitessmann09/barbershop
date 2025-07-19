@@ -15,14 +15,15 @@ const Home = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
-  const user = session ? await getUserData(session.session) : null
+
+  const user = session?.session ? await getUserData(session.session) : undefined
   const { services, barbers, bookings, availableDays } = await getData()
 
   const confirmedBookings = await getConfirmedBookings(bookings)
 
   return (
     <div>
-      <Header {...(user ?? {})} />
+      <Header />
       <div className="p-5 md:px-5 md:pt-0 lg:px-32">
         <HomeSection
           className="hidden md:block"
