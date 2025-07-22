@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth"
 import { db } from "./prisma"
 import { prismaAdapter } from "better-auth/adapters/prisma"
+import { admin } from "better-auth/plugins"
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "sqlite" }),
@@ -13,4 +14,5 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  plugins: [admin()],
 })

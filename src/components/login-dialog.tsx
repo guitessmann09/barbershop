@@ -11,7 +11,7 @@ import {
 } from "./ui/dialog"
 import { useState } from "react"
 import Spinner from "./ui/spinner"
-import { signInWithGoogle } from "@/app/(dashboard)/login/google-login"
+import { signInWithGoogle } from "@/app/_providers/google-login"
 
 const LoginDialog = ({
   isOpen,

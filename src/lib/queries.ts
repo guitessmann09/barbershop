@@ -10,9 +10,7 @@ export const getData = async () => {
         select: {
           id: true,
           name: true,
-          email: true,
-          imageURL: true,
-          password: true,
+          imageUrl: true,
           createdAt: true,
           updatedAt: true,
           bookings: {
