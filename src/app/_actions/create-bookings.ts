@@ -15,8 +15,8 @@ export const createBooking = async (params: CreateBookingParams) => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
-  const user = session ? await getUserData(session.session) : null
-  if (user === null) {
+  const user = session ? await getUserData(session.session) : undefined
+  if (user === undefined) {
     throw new Error("Unauthorized")
   }
 

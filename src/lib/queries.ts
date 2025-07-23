@@ -11,6 +11,7 @@ export const getData = async () => {
           id: true,
           name: true,
           imageUrl: true,
+          employeeId: true,
           createdAt: true,
           updatedAt: true,
           bookings: {

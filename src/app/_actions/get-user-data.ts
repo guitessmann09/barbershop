@@ -31,7 +31,7 @@ export const getUserData = async (
   const user = await db.user.findUnique({
     where: { id: session.userId },
     include: {
-      subscription: true,
+      Subscription: true,
     },
   })
 
@@ -48,13 +48,13 @@ export const getUserData = async (
     updatedAt: user.updatedAt,
     emailVerified: user.emailVerified,
     image: user.image,
-    subscriptionID: user.subscriptionID,
+    subscriptionID: user.subscriptionId,
     stripeUserId: user.stripeUserId,
-    subscription: user.subscription
+    subscription: user.Subscription
       ? {
-          id: user.subscription.id,
-          name: user.subscription.name,
-          price: Number(user.subscription.price),
+          id: user.Subscription.id,
+          name: user.Subscription.name,
+          price: Number(user.Subscription.price),
         }
       : undefined,
   }

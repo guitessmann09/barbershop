@@ -76,7 +76,7 @@ const HomeSection = async ({
               <BarberCard
                 key={barber.id}
                 name={barber.name}
-                image={barber.imageURL || ""}
+                image={barber.imageUrl || ""}
               />
             ))}
           </div>

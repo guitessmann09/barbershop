@@ -36,33 +36,10 @@ import {
   SelectValue,
   SelectTrigger,
 } from "@/components/ui/select"
+import { createUser } from "@/app/_actions/create-user"
 
 const BarberLogin = () => {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   setLoading(true)
-
-  //   const res = await signIn("credentials", {
-  //     redirect: false,
-  //     email,
-  //     password,
-  //     callbackUrl: "/dashboard",
-  //   })
-
-  //   setLoading(false)
-
-  //   if (res?.error) {
-  //     toast.error("Credenciais inválidas")
-  //     console.log(res.error)
-  //   } else {
-  //     router.push("/dashboard")
-  //   }
-  // }
 
   const registerEmployeeFormSchema = z.object({
     email: z.string().email({ message: "Digite um email válido." }),
@@ -70,7 +47,11 @@ const BarberLogin = () => {
     password: z
       .string()
       .trim()
-      .min(6, { message: "A senha deve ter no mínimo 6 caracteres." }),
+      .min(8, { message: "A senha deve ter no mínimo 8 caracteres." })
+      .max(128),
+    cargo: z.enum(["admin", "caixa", "barbeiro"], {
+      message: "Selecione um cargo válido.",
+    }),
   })
 
   const form = useForm<z.infer<typeof registerEmployeeFormSchema>>({
@@ -85,14 +66,36 @@ const BarberLogin = () => {
   const onSubmit = async (
     values: z.infer<typeof registerEmployeeFormSchema>,
   ) => {
-    const { data: newUser, error } = await authClient.admin.createUser({
+    setLoading(true)
+    const { data, error } = await authClient.signUp.email({
       email: values.email,
       password: values.password,
       name: values.name,
-      role: "user",
     })
+    if (data) {
+      await createUser({
+        data: {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.name,
+          password: values.password,
+          cargo: values.cargo,
+        },
+      })
+      toast.success("Usuário cadastrado com sucesso")
+      form.reset()
+    }
+    if (error) {
+      console.error(error)
+      toast.error(`Erro ao criar o usuário. ${error.message}`)
+    }
+    setLoading(false)
   }
-
+  const cargos = [
+    { value: "admin", label: "Administrador" },
+    { value: "caixa", label: "Caixa" },
+    { value: "barbeiro", label: "Barbeiro" },
+  ]
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <Button
@@ -135,7 +138,7 @@ const BarberLogin = () => {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -154,7 +157,33 @@ const BarberLogin = () => {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="cargo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cargo</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o cargo" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-muted">
+                      {cargos.map((cargo) => (
+                        <SelectItem key={cargo.value} value={cargo.value}>
+                          {cargo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Entrando..." : "Login"}
             </Button>

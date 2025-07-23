@@ -27,7 +27,7 @@ import Image from "next/image"
 interface BookingItemProps {
   booking: Booking
   services: Service[]
-  barbers: Pick<Barber, "id" | "name" | "imageURL">[]
+  barbers: Pick<Barber, "id" | "name" | "imageUrl">[]
 }
 
 const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
@@ -71,7 +71,7 @@ const BookingItem = ({ booking, services, barbers }: BookingItemProps) => {
                 <Image
                   src={
                     barbers.find((barber) => barber.id === booking.barberId)
-                      ?.imageURL || ""
+                      ?.imageUrl || ""
                   }
                   alt="Barber"
                   fill
