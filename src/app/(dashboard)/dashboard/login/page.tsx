@@ -1,101 +1,73 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import {
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import { HomeIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { toast } from "sonner"
-import { authClient, signIn } from "@/app/_providers/auth-client"
-import z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectValue,
-  SelectTrigger,
-} from "@/components/ui/select"
-import { createUser } from "@/app/_actions/create-user"
+  Form,
+  FormLabel,
+  FormMessage,
+  FormControl,
+  FormField,
+  FormItem,
+} from "@/components/ui/form"
+import z, { string } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { authClient } from "@/app/_providers/auth-client"
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { toast, Toaster } from "sonner"
+import { redirect } from "next/navigation"
+
+const signInFormSchema = z.object({
+  email: string().email({ message: "Digite um email válido." }),
+  password: string().trim().min(1, { message: "A senha é obrigatória." }),
+})
 
 const BarberLogin = () => {
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const registerEmployeeFormSchema = z.object({
-    email: z.string().email({ message: "Digite um email válido." }),
-    name: z.string().trim().min(1, { message: "O nome é obrigatório." }),
-    password: z
-      .string()
-      .trim()
-      .min(8, { message: "A senha deve ter no mínimo 8 caracteres." })
-      .max(128),
-    cargo: z.enum(["admin", "caixa", "barbeiro"], {
-      message: "Selecione um cargo válido.",
-    }),
-  })
+  const session = authClient.useSession()
 
-  const form = useForm<z.infer<typeof registerEmployeeFormSchema>>({
-    resolver: zodResolver(registerEmployeeFormSchema),
+  if (session) {
+    redirect("/dashboard")
+  }
+
+  const form = useForm<z.infer<typeof signInFormSchema>>({
+    resolver: zodResolver(signInFormSchema),
     defaultValues: {
       email: "",
-      name: "",
       password: "",
     },
   })
 
-  const onSubmit = async (
-    values: z.infer<typeof registerEmployeeFormSchema>,
-  ) => {
-    setLoading(true)
-    const { data, error } = await authClient.signUp.email({
+  const onSubmit = async (values: z.infer<typeof signInFormSchema>) => {
+    setIsLoading(true)
+    const { data, error } = await authClient.signIn.email({
       email: values.email,
       password: values.password,
-      name: values.name,
+      rememberMe: false,
+      callbackURL: "/dashboard",
     })
     if (data) {
-      await createUser({
-        data: {
-          id: data.user.id,
-          email: data.user.email,
-          name: data.user.name,
-          password: values.password,
-          cargo: values.cargo,
-        },
-      })
-      toast.success("Usuário cadastrado com sucesso")
-      form.reset()
+      toast.success("Login realizado com sucesso!")
+      console.log(data)
     }
     if (error) {
+      toast.error(`Erro ao realizar o login. ${error.message}`)
       console.error(error)
-      toast.error(`Erro ao criar o usuário. ${error.message}`)
     }
-    setLoading(false)
+    setIsLoading(false)
   }
-  const cargos = [
-    { value: "admin", label: "Administrador" },
-    { value: "caixa", label: "Caixa" },
-    { value: "barbeiro", label: "Barbeiro" },
-  ]
+
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <Button
@@ -125,20 +97,7 @@ const BarberLogin = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
+                    <Input type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,35 +116,8 @@ const BarberLogin = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="cargo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cargo</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o cargo" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-muted">
-                      {cargos.map((cargo) => (
-                        <SelectItem key={cargo.value} value={cargo.value}>
-                          {cargo.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Entrando..." : "Login"}
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? "Entrando..." : "Login"}
             </Button>
           </form>
         </Form>
