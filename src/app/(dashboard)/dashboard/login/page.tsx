@@ -37,7 +37,7 @@ const BarberLogin = () => {
 
   const session = authClient.useSession()
 
-  if (session) {
+  if (session.data?.user.id) {
     redirect("/dashboard")
   }
 
