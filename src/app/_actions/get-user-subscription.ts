@@ -37,7 +37,7 @@ export const getUserSubscription =
       const user = await db.user.findUnique({
         where: { id: session.user.id },
         include: {
-          subscription: {
+          Subscription: {
             include: {
               benefits: true,
             },
@@ -45,18 +45,18 @@ export const getUserSubscription =
         },
       })
 
-      if (!user || !user.subscription) {
+      if (!user || !user.Subscription) {
         return null
       }
 
       // Se não há chave do Stripe configurada, retorna apenas os dados do banco
       if (!process.env.STRIPE_SECRET_KEY) {
         return {
-          id: user.subscription.id,
-          name: user.subscription.name,
-          price: Number(user.subscription.price),
-          benefits: user.subscription.benefits,
-          stripePrice: user.subscription.stripePrice,
+          id: user.Subscription.id,
+          name: user.Subscription.name,
+          price: Number(user.Subscription.price),
+          benefits: user.Subscription.benefits,
+          stripePrice: user.Subscription.stripePrice,
         }
       }
 
@@ -122,11 +122,11 @@ export const getUserSubscription =
       }
 
       return {
-        id: user.subscription.id,
-        name: user.subscription.name,
-        price: Number(user.subscription.price),
-        benefits: user.subscription.benefits,
-        stripePrice: user.subscription.stripePrice,
+        id: user.Subscription.id,
+        name: user.Subscription.name,
+        price: Number(user.Subscription.price),
+        benefits: user.Subscription.benefits,
+        stripePrice: user.Subscription.stripePrice,
         stripeSubscription,
         stripeCustomer,
         createdAt,

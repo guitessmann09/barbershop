@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import "./globals.css"
+import "@/app/globals.css"
 import { Toaster } from "sonner"
 import Footer from "@/components/footer"
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "Barbearia Dandy's Den",
 }
 
-export default function RootLayout({
+export default function LoginLayou({
   children,
 }: Readonly<{
   children: React.ReactNode

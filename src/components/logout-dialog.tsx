@@ -23,7 +23,7 @@ const LogoutDialog = ({
   const handleLogout = async () => {
     setIsLoading(true)
     await signOut()
-    window.location.href = "/"
+    window.location.href = "/home"
   }
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

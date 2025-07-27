@@ -1,6 +1,7 @@
 "use server"
 
 import { db } from "@/lib/prisma"
+import { Barber, Cargo } from "@prisma/client"
 import { Session } from "better-auth"
 
 export interface UserData {
@@ -19,6 +20,10 @@ export interface UserData {
     name: string
     price: number
   }
+  employee?: {
+    id: string
+    cargo: Cargo
+  }
 }
 
 export const getUserData = async (
@@ -32,6 +37,7 @@ export const getUserData = async (
     where: { id: session.userId },
     include: {
       Subscription: true,
+      Employee: true,
     },
   })
 
@@ -55,6 +61,12 @@ export const getUserData = async (
           id: user.Subscription.id,
           name: user.Subscription.name,
           price: Number(user.Subscription.price),
+        }
+      : undefined,
+    employee: user.Employee
+      ? {
+          id: user.Employee.id,
+          cargo: user.Employee.cargo,
         }
       : undefined,
   }
