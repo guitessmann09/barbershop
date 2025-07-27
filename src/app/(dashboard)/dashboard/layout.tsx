@@ -10,6 +10,8 @@ import {
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { getUserData } from "@/app/_actions/get-user-data"
+import BreadcrumbDashboard from "./_components/breadcrumb-dashboard"
+import { Separator } from "@/components/ui/separator"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,9 +34,12 @@ export default async function DashboardLayout({
             image={user?.image ?? ""}
             cargo={user?.employee?.cargo ?? ""}
           />
-          <SidebarInset>
-            <SidebarTrigger className="-ml-1" />
-
+          <SidebarInset className="p-4">
+            <div className="mb-4 flex items-center gap-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <BreadcrumbDashboard />
+            </div>
             {children}
             <Toaster />
           </SidebarInset>
