@@ -258,7 +258,7 @@ export function BookingForm({
                       >
                         <div className="relative h-10 w-10">
                           <Image
-                            src={barber.imageURL || ""}
+                            src={barber?.imageUrl || ""}
                             alt={barber.name}
                             fill
                             className="rounded-full object-cover"

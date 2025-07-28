@@ -15,6 +15,7 @@ import React from "react"
 const nameMap: Record<string, string> = {
   dashboard: "Dashboard",
   funcionarios: "Funcionários",
+  agenda: "Agendamentos",
   // Adicione outros mapeamentos conforme necessário
 }
 
