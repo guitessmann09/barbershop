@@ -5,11 +5,11 @@ import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { getUserData } from "./get-user-data"
-interface DeleteBookingParams {
+interface DeleteAppointmentParams {
   id: string
 }
 
-export const deleteBooking = async (params: DeleteBookingParams) => {
+export const deleteAppointment = async (params: DeleteAppointmentParams) => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
@@ -18,13 +18,13 @@ export const deleteBooking = async (params: DeleteBookingParams) => {
     throw new Error("Unauthorized")
   }
 
-  await db.booking.delete({
+  await db.appointment.delete({
     where: {
       id: params.id,
     },
   })
 
-  revalidatePath("/bookings")
+  revalidatePath("/appointments")
   revalidatePath("/app")
   revalidatePath("/dashboard")
 }

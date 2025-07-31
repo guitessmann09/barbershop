@@ -5,13 +5,13 @@ import { db } from "@/lib/prisma"
 import { headers } from "next/headers"
 import { getUserData } from "./get-user-data"
 
-interface CreateBookingParams {
+interface CreateAppointmentParams {
   serviceId: string
   barberId: number
   date: Date
 }
 
-export const createBooking = async (params: CreateBookingParams) => {
+export const createAppointment = async (params: CreateAppointmentParams) => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
@@ -20,7 +20,7 @@ export const createBooking = async (params: CreateBookingParams) => {
     throw new Error("Unauthorized")
   }
 
-  await db.booking.create({
+  await db.appointment.create({
     data: {
       ...params,
       userId: user.id,

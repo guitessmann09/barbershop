@@ -5,11 +5,11 @@ import { Card, CardContent } from "./ui/card"
 import { Button } from "./ui/button"
 import { Sheet, SheetContent } from "./ui/sheet"
 import { useState } from "react"
-import { createBooking } from "@/app/_actions/create-bookings"
+import { createAppointment } from "@/app/_actions/create-appointments"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { BookingForm } from "./booking-form"
-import { ServiceItemProps, BookingFormData } from "@/types/barbershop"
+import { AppointmentForm } from "./appointment-form"
+import { ServiceItemProps, AppointmentFormData } from "@/types/barbershop"
 import { set } from "date-fns"
 import LoginDialog from "./login-dialog"
 import { useSession } from "@/app/_providers/auth-client"
@@ -18,24 +18,24 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
   const router = useRouter()
   const { data } = useSession()
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
-  const [formData, setFormData] = useState<BookingFormData>({
+  const [formData, setFormData] = useState<AppointmentFormData>({
     selectedDay: undefined,
     selectedTime: undefined,
     selectedBarber: undefined,
   })
 
-  const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false)
+  const [appointmentSheetIsOpen, setAppointmentSheetIsOpen] = useState(false)
 
-  const handleBookingSheetOpenChange = () => {
+  const handleAppointmentSheetOpenChange = () => {
     setFormData({
       selectedDay: undefined,
       selectedTime: undefined,
       selectedBarber: undefined,
     })
-    setBookingSheetIsOpen(false)
+    setAppointmentSheetIsOpen(false)
   }
 
-  const handleCreateBooking = async () => {
+  const handleCreateAppointment = async () => {
     const { selectedDay, selectedTime, selectedBarber } = formData
     if (!selectedDay || !selectedTime || !selectedBarber) return
 
@@ -47,7 +47,7 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
         minutes: minute,
       })
 
-      await createBooking({
+      await createAppointment({
         serviceId: service.id,
         barberId: selectedBarber?.id,
         date: newDate,
@@ -83,8 +83,8 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
               }).format(Number(service.price))}
             </p>
             <Sheet
-              open={bookingSheetIsOpen}
-              onOpenChange={handleBookingSheetOpenChange}
+              open={appointmentSheetIsOpen}
+              onOpenChange={handleAppointmentSheetOpenChange}
             >
               <Button
                 size="sm"
@@ -93,7 +93,7 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
                   if (!data?.user) {
                     setLoginDialogIsOpen(true)
                   } else {
-                    setBookingSheetIsOpen(true)
+                    setAppointmentSheetIsOpen(true)
                   }
                 }}
               >
@@ -104,7 +104,7 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
                 onOpenChange={setLoginDialogIsOpen}
               />
               <SheetContent className="h-full overflow-y-auto px-0">
-                <BookingForm
+                <AppointmentForm
                   service={service}
                   barbers={barbers}
                   formData={formData}
@@ -131,8 +131,8 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
                       !formData.selectedBarber
                     }
                     onClick={() => {
-                      handleCreateBooking()
-                      handleBookingSheetOpenChange()
+                      handleCreateAppointment()
+                      handleAppointmentSheetOpenChange()
                     }}
                   >
                     Confirmar

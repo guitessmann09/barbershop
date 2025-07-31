@@ -1,17 +1,17 @@
 import { Service, Barber } from "@prisma/client"
 
-export interface BarberWithBookings
+export interface BarberWithAppointments
   extends Pick<Barber, "id" | "name" | "imageUrl"> {
-  bookings: { date: Date }[]
+  appointments: { date: Date }[]
 }
 
 export interface ServiceItemProps {
   service: Service
-  barbers: BarberWithBookings[]
+  barbers: BarberWithAppointments[]
   availableDays: { weekday: number; barberId: number }[]
 }
 
-export interface BookingFormData {
+export interface AppointmentFormData {
   selectedDay: Date | undefined
   selectedTime: string | undefined
   selectedBarber: Barber | undefined

@@ -1,17 +1,17 @@
-import BookingItem from "@/components/booking-item"
+import AppointmentItem from "@/components/appointment-item"
 import Header from "@/components/header"
 import { redirect } from "next/navigation"
 import { getData } from "@/lib/queries"
 import {
-  getConfirmedBookings,
-  getCompletedBookings,
-} from "@/app/_constants/get-bookings"
+  getConfirmedAppointments,
+  getCompletedAppointments,
+} from "@/app/_constants/get-appointments"
 import getUserWithProvider from "../_helpers/get-user-with-provider"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { getUserData } from "../_actions/get-user-data"
 
-const Bookings = async () => {
+const Appointments = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
@@ -21,10 +21,10 @@ const Bookings = async () => {
 
   const user = session ? await getUserData(session.session) : null
 
-  const { bookings, services, barbers } = await getData()
+  const { appointments, services, barbers } = await getData()
 
-  const confirmedBookings = await getConfirmedBookings(bookings)
-  const completedBookings = await getCompletedBookings(bookings)
+  const confirmedAppointments = await getConfirmedAppointments(appointments)
+  const completedAppointments = await getCompletedAppointments(appointments)
 
   return (
     <div>
@@ -38,20 +38,20 @@ const Bookings = async () => {
             <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
               Confirmados
             </h2>
-            {!confirmedBookings.length && (
+            {!confirmedAppointments.length && (
               <p className="text-sm text-gray-500">
                 Nenhum agendamento confirmado
               </p>
             )}
-            {confirmedBookings
+            {confirmedAppointments
               .sort(
                 (a, b) =>
                   new Date(a.date).getTime() - new Date(b.date).getTime(),
               )
-              .map((booking) => (
-                <BookingItem
-                  key={booking.id}
-                  booking={booking}
+              .map((appointment) => (
+                <AppointmentItem
+                  key={appointment.id}
+                  appointment={appointment}
                   services={services}
                   barbers={barbers}
                 />
@@ -61,15 +61,15 @@ const Bookings = async () => {
             <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-500">
               Finalizados
             </h2>
-            {!completedBookings.length && (
+            {!completedAppointments.length && (
               <p className="text-sm text-gray-500">
                 Nenhum agendamento finalizado
               </p>
             )}
-            {completedBookings.map((booking) => (
-              <BookingItem
-                key={booking.id}
-                booking={booking}
+            {completedAppointments.map((appointment) => (
+              <AppointmentItem
+                key={appointment.id}
+                appointment={appointment}
                 services={services}
                 barbers={barbers}
               />
@@ -81,4 +81,4 @@ const Bookings = async () => {
   )
 }
 
-export default Bookings
+export default Appointments

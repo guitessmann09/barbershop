@@ -24,33 +24,35 @@ import {
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { useState } from "react"
-import { Booking, Service, User } from "@prisma/client"
+import { Appointment, Service, User } from "@prisma/client"
 import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
 import { Avatar } from "./ui/avatar"
 import { AvatarImage } from "./ui/avatar"
 import { AvatarFallback } from "./ui/avatar"
-import { deleteBooking } from "@/app/_actions/delete-bookings"
+import { deleteAppointment } from "@/app/_actions/delete-appointments"
 import { toast } from "sonner"
 
-interface BarberBookingItemProps {
-  appointment: Booking
+interface BarberAppointmentItemProps {
+  appointment: Appointment
   services: Service[]
   users: User[]
   isFuture?: boolean
 }
 
-const BarberBookingItem = ({
+const BarberAppointmentItem = ({
   appointment,
   services,
   users,
   isFuture = false,
-}: BarberBookingItemProps) => {
+}: BarberAppointmentItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [cancelReason, setCancelReason] = useState("")
-  const [handleCancelBookingIsLoading, setHandleCancelBookingIsLoading] =
-    useState(false)
+  const [
+    handleCancelAppointmentIsLoading,
+    setHandleCancelAppointmentIsLoading,
+  ] = useState(false)
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded)
@@ -60,16 +62,16 @@ const BarberBookingItem = ({
     setShowCancelDialog(true)
   }
 
-  const handleCancelBooking = async () => {
+  const handleCancelAppointment = async () => {
     try {
-      setHandleCancelBookingIsLoading(true)
-      await deleteBooking({ id: appointment.id })
+      setHandleCancelAppointmentIsLoading(true)
+      await deleteAppointment({ id: appointment.id })
       toast.success("Agendamento cancelado com sucesso!")
     } catch (error) {
       console.error(error)
       toast.error("Erro ao cancelar o agendamento.")
     } finally {
-      setHandleCancelBookingIsLoading(false)
+      setHandleCancelAppointmentIsLoading(false)
       setShowCancelDialog(false)
     }
   }
@@ -189,11 +191,13 @@ const BarberBookingItem = ({
             </Button>
             <Button
               variant="destructive"
-              disabled={!cancelReason.trim() || handleCancelBookingIsLoading}
-              onClick={handleCancelBooking}
+              disabled={
+                !cancelReason.trim() || handleCancelAppointmentIsLoading
+              }
+              onClick={handleCancelAppointment}
               className="w-full rounded-lg"
             >
-              {handleCancelBookingIsLoading ? (
+              {handleCancelAppointmentIsLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 "Confirmar Cancelamento"
@@ -206,4 +210,4 @@ const BarberBookingItem = ({
   )
 }
 
-export default BarberBookingItem
+export default BarberAppointmentItem

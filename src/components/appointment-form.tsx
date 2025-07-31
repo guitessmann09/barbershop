@@ -14,7 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "./ui/carousel"
-import { BookingFormData, BarberWithBookings } from "@/types/barbershop"
+import { AppointmentFormData, BarberWithAppointments } from "@/types/barbershop"
 import { Service, Barber } from "@prisma/client"
 import { useMemo, useEffect, useState } from "react"
 import {
@@ -44,17 +44,17 @@ const TIME_LIST = [
   "19:15",
 ]
 
-interface BookingFormProps {
+interface AppointmentFormProps {
   service: Service
-  barbers: BarberWithBookings[]
-  formData: BookingFormData
+  barbers: BarberWithAppointments[]
+  formData: AppointmentFormData
   onDaySelect: (date: Date | undefined) => void
   onTimeSelect: (time: string) => void
   onBarberSelect: (barber: Barber) => void
   availableDays: { weekday: number; barberId: number }[]
 }
 
-export function BookingForm({
+export function AppointmentForm({
   service,
   barbers,
   formData,
@@ -62,7 +62,7 @@ export function BookingForm({
   onTimeSelect,
   onBarberSelect,
   availableDays,
-}: BookingFormProps) {
+}: AppointmentFormProps) {
   const { selectedDay, selectedTime, selectedBarber } = formData
   const [userData, setUserData] = useState<UserData | null>(null)
   const [discountInfo, setDiscountInfo] = useState<{
@@ -79,7 +79,7 @@ export function BookingForm({
       if (session?.data?.session) {
         try {
           const data = await getUserData(session.data.session)
-          setUserData(data)
+          setUserData(data ?? null)
         } catch (error) {
           console.error("Erro ao buscar dados do usuário:", error)
         }
@@ -139,8 +139,8 @@ export function BookingForm({
 
       if (!worksOnThisDay) return false
 
-      const isBooked = barber.bookings.some((booking) =>
-        isEqual(new Date(booking.date), selectedDateTime),
+      const isBooked = barber.appointments.some((appointment) =>
+        isEqual(new Date(appointment.date), selectedDateTime),
       )
 
       return !isBooked

@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma"
 
 export const getData = async () => {
-  const [services, barbers, bookings, users, availableDays, subscriptions] =
+  const [services, barbers, appointments, users, availableDays, subscriptions] =
     await Promise.all([
       db.service.findMany(),
       db.barber.findMany({
@@ -14,12 +14,12 @@ export const getData = async () => {
           employeeId: true,
           createdAt: true,
           updatedAt: true,
-          bookings: {
+          appointments: {
             select: { date: true },
           },
         },
       }),
-      db.booking.findMany(),
+      db.appointment.findMany(),
       db.user.findMany(),
       db.availability.findMany({
         select: {
@@ -34,5 +34,12 @@ export const getData = async () => {
       }),
     ])
 
-  return { services, barbers, bookings, users, availableDays, subscriptions }
+  return {
+    services,
+    barbers,
+    appointments,
+    users,
+    availableDays,
+    subscriptions,
+  }
 }

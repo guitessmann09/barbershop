@@ -2,9 +2,9 @@ import { format } from "date-fns"
 import { ptBR, se } from "date-fns/locale"
 import { ClassValue } from "clsx"
 import { cn } from "@/lib/utils"
-import { Booking, Service, Barber } from "@prisma/client"
+import { Appointment, Service, Barber } from "@prisma/client"
 import BarberCard from "./barber-card"
-import BookingComponent from "./bookings-component"
+import AppointmentComponent from "./appointments-component"
 import AnimatedBanner from "./banner-animated"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -12,14 +12,14 @@ import { getUserData } from "@/app/_actions/get-user-data"
 
 interface HomeSectionProps {
   className?: ClassValue
-  confirmedBookings: Booking[]
+  confirmedAppointments: Appointment[]
   services: Service[]
   barbers: Barber[]
 }
 
 const HomeSection = async ({
   className,
-  confirmedBookings,
+  confirmedAppointments,
   services,
   barbers,
 }: HomeSectionProps) => {
@@ -50,9 +50,9 @@ const HomeSection = async ({
             {format(new Date(), "MMMM", { locale: ptBR })}
           </span>
           <div>
-            {session || confirmedBookings.length >= 0 ? (
-              <BookingComponent
-                confirmedBookings={confirmedBookings}
+            {session || confirmedAppointments.length >= 0 ? (
+              <AppointmentComponent
+                confirmedAppointments={confirmedAppointments}
                 services={services}
                 barbers={barbers}
               />

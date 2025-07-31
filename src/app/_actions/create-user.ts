@@ -16,11 +16,11 @@ export const createUser = async ({ data }: CreateUserParams) => {
   await db.user.update({
     where: { id: data.id },
     data: {
-      Employee: {
+      employee: {
         create: {
           cargo: data.cargo,
           ...(data.cargo === "barbeiro" && {
-            Barber: {
+            barber: {
               create: {
                 name: data.name,
               },

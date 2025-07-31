@@ -13,7 +13,7 @@ export interface UserData {
   updatedAt: Date
   emailVerified: boolean
   image: string | null
-  subscriptionID: number | null
+  subscriptionId: number | null
   stripeUserId: string | null
   subscription?: {
     id: number
@@ -37,7 +37,7 @@ export const getUserData = async (
     where: { id: session.userId },
     include: {
       Subscription: true,
-      Employee: true,
+      employee: true,
     },
   })
 
@@ -54,7 +54,7 @@ export const getUserData = async (
     updatedAt: user.updatedAt,
     emailVerified: user.emailVerified,
     image: user.image,
-    subscriptionID: user.subscriptionId,
+    subscriptionId: user.subscriptionId,
     stripeUserId: user.stripeUserId,
     subscription: user.Subscription
       ? {
@@ -63,10 +63,10 @@ export const getUserData = async (
           price: Number(user.Subscription.price),
         }
       : undefined,
-    employee: user.Employee
+    employee: user.employee
       ? {
-          id: user.Employee.id,
-          cargo: user.Employee.cargo,
+          id: user.employee.id,
+          cargo: user.employee.cargo,
         }
       : undefined,
   }

@@ -149,10 +149,10 @@ async function getAdditionalServiceDiscount(
 export async function calculateServiceDiscount(
   service: Service,
   user: User,
-  bookingDate: Date,
+  appointmentDate: Date,
 ): Promise<DiscountInfo> {
   // Se o usuário não tem assinatura, não há desconto
-  if (!user.subscriptionID) {
+  if (!user.subscriptionId) {
     return {
       discountPercentage: 0,
       isFree: false,
@@ -160,13 +160,13 @@ export async function calculateServiceDiscount(
     }
   }
 
-  const dayOfWeek = bookingDate.getDay() // 0 = domingo, 1 = segunda, etc.
+  const dayOfWeek = appointmentDate.getDay() // 0 = domingo, 1 = segunda, etc.
   const subscription = await db.subscription.findFirst({
-    where: { id: user.subscriptionID },
+    where: { id: user.subscriptionId },
   })
 
   // Verifica se o serviço é gratuito
-  const isFree = await isServiceFree(service.id, user.subscriptionID, dayOfWeek)
+  const isFree = await isServiceFree(service.id, user.subscriptionId, dayOfWeek)
   if (isFree) {
     return {
       discountPercentage: 100,
@@ -177,7 +177,7 @@ export async function calculateServiceDiscount(
 
   // Verifica desconto para serviços adicionais
   const additionalDiscount = await getAdditionalServiceDiscount(
-    user.subscriptionID,
+    user.subscriptionId,
   )
 
   if (additionalDiscount > 0) {
@@ -216,11 +216,15 @@ export function calculateFinalPrice(
 export async function getUserServiceDiscounts(
   services: Service[],
   user: User & { subscription?: { name: string } | null },
-  bookingDate: Date,
+  appointmentDate: Date,
 ): Promise<SubscriptionDiscount[]> {
   const discountPromises = services.map(async (service) => ({
     serviceId: service.id,
-    discountInfo: await calculateServiceDiscount(service, user, bookingDate),
+    discountInfo: await calculateServiceDiscount(
+      service,
+      user,
+      appointmentDate,
+    ),
   }))
 
   return Promise.all(discountPromises)

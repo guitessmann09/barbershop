@@ -7,10 +7,10 @@ import { UserData } from "./get-user-data"
 export const calculateDiscountAction = async (
   service: Service,
   userData: UserData,
-  bookingDate: Date,
+  appointmentDate: Date,
 ) => {
   try {
-    return await calculateServiceDiscount(service, userData, bookingDate)
+    return await calculateServiceDiscount(service, userData, appointmentDate)
   } catch (error) {
     console.error("Erro ao calcular desconto:", error)
     return {

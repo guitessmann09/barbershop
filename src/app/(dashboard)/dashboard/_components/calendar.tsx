@@ -7,6 +7,7 @@ import { ptBR } from "date-fns/locale"
 import { Separator } from "@/components/ui/separator"
 import { Barber } from "@prisma/client"
 import { Dialog } from "@radix-ui/react-dialog"
+import { createAppointment } from "@/app/_actions/create-appointments"
 
 const Calendar = async () => {
   const barbers = await db.barber.findMany({})
@@ -58,8 +59,12 @@ const Calendar = async () => {
     })
   }
 
-  function getAppointmentStartingAtSlot(id: number, time: string) {
-    throw new Error("Function not implemented.")
+  const isSlotAvailable = (barberId: number, time: string) => {
+    return !isSlotOccupiedByAppointment(barberId, time)
+  }
+
+  const calculateSlotsForAppointment = (duration: number) => {
+    return Math.ceil(duration / 10) // Cada slot é de 10 minutos
   }
 
   return (
@@ -79,8 +84,8 @@ const Calendar = async () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-screen overflow-x-auto">
-          <div className="min-w-[800px]">
+        <div className="h-screen overflow-y-scroll [&::-webkit-scrollbar]:hidden">
+          <div className="">
             <div className={`mb-4 grid grid-cols-${barbers.length + 1} gap-2`}>
               <div className="p-2 text-sm font-semibold text-muted-foreground">
                 Horário

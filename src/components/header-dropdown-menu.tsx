@@ -44,7 +44,10 @@ const HeaderDropDownMenu = (user: UserData) => {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer hover:bg-transparent hover:text-primary">
-            <Link href="/bookings" className="flex w-full items-center gap-2">
+            <Link
+              href="/appointments"
+              className="flex w-full items-center gap-2"
+            >
               <Calendar size={18} />
               <p className="text-sm">Agendamentos</p>
             </Link>

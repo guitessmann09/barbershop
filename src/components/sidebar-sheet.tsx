@@ -99,7 +99,7 @@ const SidebarSheet = () => {
             className="flex items-center justify-start gap-2"
           >
             <Link
-              href={"/bookings"}
+              href={"/appointments"}
               className="flex w-full items-center justify-start gap-2"
             >
               <CalendarIcon size={18} />

@@ -1,7 +1,7 @@
 import Header from "@/components/header"
 import ServiceItem from "@/components/service-item"
 import { getData } from "@/lib/queries"
-import { getConfirmedBookings } from "@/app/_constants/get-bookings"
+import { getConfirmedAppointments } from "@/app/_constants/get-appointments"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import AnimatedBanner from "@/components/banner-animated"
@@ -9,7 +9,7 @@ import { getUserData } from "../_actions/get-user-data"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import HomeSection from "@/components/home-section"
-import BookingItem from "@/components/booking-item"
+import AppointmentItem from "@/components/appointment-item"
 
 const Home = async () => {
   const session = await auth.api.getSession({
@@ -17,9 +17,9 @@ const Home = async () => {
   })
 
   const user = session?.session ? await getUserData(session.session) : undefined
-  const { services, barbers, bookings, availableDays } = await getData()
+  const { services, barbers, appointments, availableDays } = await getData()
 
-  const confirmedBookings = await getConfirmedBookings(bookings)
+  const confirmedAppointments = await getConfirmedAppointments(appointments)
 
   return (
     <div>
@@ -27,7 +27,7 @@ const Home = async () => {
       <div className="p-5 md:px-5 md:pt-0 lg:px-32">
         <HomeSection
           className="hidden md:block"
-          confirmedBookings={confirmedBookings}
+          confirmedAppointments={confirmedAppointments}
           services={services}
           barbers={barbers}
         />
@@ -53,7 +53,7 @@ const Home = async () => {
           <h2 className="mt-6 text-xs font-bold uppercase text-gray-500">
             Agendamentos
           </h2>
-          {!session || !confirmedBookings.length ? (
+          {!session || !confirmedAppointments.length ? (
             <div className="mt-3">
               <p className="text-sm text-gray-500">
                 Você ainda não tem agendamentos
@@ -61,15 +61,15 @@ const Home = async () => {
             </div>
           ) : (
             <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-              {confirmedBookings
+              {confirmedAppointments
                 .sort(
                   (a, b) =>
                     new Date(a.date).getTime() - new Date(b.date).getTime(),
                 )
-                .map((booking) => (
-                  <BookingItem
-                    key={booking.id}
-                    booking={booking}
+                .map((appointment) => (
+                  <AppointmentItem
+                    key={appointment.id}
+                    appointment={appointment}
                     services={services}
                     barbers={barbers}
                   />
