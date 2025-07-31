@@ -2,13 +2,66 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/prisma"
 import { Clock, User } from "lucide-react"
 import Image from "next/image"
-import { format } from "date-fns"
+import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Separator } from "@/components/ui/separator"
 import { Barber } from "@prisma/client"
+import { Dialog } from "@radix-ui/react-dialog"
 
 const Calendar = async () => {
   const barbers = await db.barber.findMany({})
+  const appointments = await db.appointment.findMany({
+    include: {
+      service: {
+        select: {
+          durationMinutes: true,
+        },
+      },
+    },
+  })
+
+  // Gerar horários de 8:00 às 18:00 de 10 em 10 minutos
+  const generateTimeSlots = () => {
+    const slots = []
+    for (let hour = 10; hour < 20; hour++) {
+      for (let minute = 0; minute < 60; minute += 10) {
+        const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
+        slots.push(timeString)
+      }
+    }
+    return slots
+  }
+
+  const timeSlots = generateTimeSlots()
+
+  const getAppointmentByBarber = (barberId: number, time: string) => {
+    return appointments.find(
+      (appointment) =>
+        appointment.barberId === barberId &&
+        format(appointment.date, "HH:mm") === time,
+    )
+  }
+
+  const isSlotOccupiedByAppointment = (barberId: number, time: string) => {
+    return appointments.find((appointment) => {
+      if (appointment.barberId !== barberId) return false
+
+      const appointmentTime = format(appointment.date, "HH:mm")
+      const [hour, minute] = appointmentTime.split(":").map(Number)
+      const appointmentDate = new Date(0, 0, 0, hour, minute)
+      const appointmentEndTime = format(
+        addMinutes(appointmentDate, appointment.service.durationMinutes),
+        "HH:mm",
+      )
+
+      return time >= appointmentTime && time < appointmentEndTime
+    })
+  }
+
+  function getAppointmentStartingAtSlot(id: number, time: string) {
+    throw new Error("Function not implemented.")
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -28,7 +81,7 @@ const Calendar = async () => {
       <CardContent>
         <div className="h-screen overflow-x-auto">
           <div className="min-w-[800px]">
-            <div className="mb-4 grid grid-cols-5 gap-2">
+            <div className={`mb-4 grid grid-cols-${barbers.length + 1} gap-2`}>
               <div className="p-2 text-sm font-semibold text-muted-foreground">
                 Horário
               </div>
@@ -49,7 +102,44 @@ const Calendar = async () => {
                     )}
                     {barber.name}
                   </div>
-                  <Separator orientation="vertical" />
+                </div>
+              ))}
+            </div>
+
+            {/* Grid de Horarios */}
+            <div className="space-y-1 overflow-y-auto">
+              {timeSlots.map((time) => (
+                <div
+                  key={time}
+                  className={`grid grid-cols-${barbers.length + 1} gap-2`}
+                >
+                  <div className="border-r p-2 text-sm text-muted-foreground">
+                    {time}
+                  </div>
+                  {barbers.map((barber) => {
+                    const appointmentByBarber = getAppointmentByBarber(
+                      barber.id,
+                      time,
+                    )
+                    const isOccupied = isSlotOccupiedByAppointment(
+                      barber.id,
+                      time,
+                    )
+                    const isAvailable = !isOccupied
+
+                    return (
+                      <div
+                        key={`${barber.id}-${time}`}
+                        className="relative min-h-[40px]"
+                      >
+                        {appointmentByBarber ? (
+                          <Dialog></Dialog>
+                        ) : isAvailable ? (
+                          <Dialog></Dialog>
+                        ) : null}
+                      </div>
+                    )
+                  })}
                 </div>
               ))}
             </div>
