@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/prisma"
-import { Clock, User } from "lucide-react"
+import { Clock, Plus, User } from "lucide-react"
 import Image from "next/image"
 import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -8,6 +8,15 @@ import { Separator } from "@/components/ui/separator"
 import { Barber } from "@prisma/client"
 import { Dialog } from "@radix-ui/react-dialog"
 import { createAppointment } from "@/app/_actions/create-appointments"
+import {
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import CalendarAppointmentForm from "./calendar-appointment-form"
+import { Badge } from "@/components/ui/badge"
 
 const Calendar = async () => {
   const barbers = await db.barber.findMany({})
@@ -15,7 +24,13 @@ const Calendar = async () => {
     include: {
       service: {
         select: {
+          name: true,
           durationMinutes: true,
+        },
+      },
+      user: {
+        select: {
+          name: true,
         },
       },
     },
@@ -85,9 +100,12 @@ const Calendar = async () => {
       </CardHeader>
       <CardContent>
         <div className="h-screen overflow-y-scroll [&::-webkit-scrollbar]:hidden">
-          <div className="">
-            <div className={`mb-4 grid grid-cols-${barbers.length + 1} gap-2`}>
-              <div className="p-2 text-sm font-semibold text-muted-foreground">
+          <div className="min-w-[800px]">
+            {/* Header */}
+            <div
+              className={`mb-4 grid grid-cols-${barbers.length + 1} gap-2 border-b pb-4`}
+            >
+              <div className="p-2 font-semibold text-muted-foreground">
                 Horário
               </div>
               {barbers.map((barber) => (
@@ -138,9 +156,53 @@ const Calendar = async () => {
                         className="relative min-h-[40px]"
                       >
                         {appointmentByBarber ? (
-                          <Dialog></Dialog>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <div
+                                className={`absolute left-0 right-0 top-0 z-10 cursor-pointer overflow-hidden rounded border p-2 text-xs transition-opacity hover:opacity-80`}
+                                style={{
+                                  height: `${calculateSlotsForAppointment(appointmentByBarber.service.durationMinutes) * 41 - 1}px`,
+                                }}
+                              >
+                                <div className="flex h-full flex-col justify-between overflow-hidden">
+                                  <div className="min-h-0 flex-1">
+                                    <div className="truncate font-semibold leading-tight">
+                                      {appointmentByBarber.user.name}
+                                    </div>
+                                    <div className="truncate text-xs leading-tight">
+                                      {appointmentByBarber.service.name}
+                                    </div>
+                                    <div className="mt-1 truncate text-xs leading-tight text-muted-foreground">
+                                      {format(
+                                        appointmentByBarber.date,
+                                        "HH:mm",
+                                        { locale: ptBR },
+                                      )}{" "}
+                                      -{" "}
+                                      {format(
+                                        addMinutes(
+                                          appointmentByBarber.date,
+                                          appointmentByBarber.service
+                                            .durationMinutes,
+                                        ),
+                                        "HH:mm",
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="mt-1 flex-shrink-0">
+                                    <Badge
+                                      variant="outline"
+                                      className="max-w-full truncate text-xs"
+                                    >
+                                      Confirmado
+                                    </Badge>
+                                  </div>
+                                </div>
+                              </div>
+                            </DialogTrigger>
+                          </Dialog>
                         ) : isAvailable ? (
-                          <Dialog></Dialog>
+                          <CalendarAppointmentForm />
                         ) : null}
                       </div>
                     )
