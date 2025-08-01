@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { SidebarTrigger } from "@/components/ui/sidebar"
 import { auth } from "@/lib/auth"
+import { db } from "@/lib/prisma"
 import {
   Calendar,
   Clock,
@@ -25,10 +25,7 @@ const Dashboard = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
-  const user = session?.user
-  if (!user?.id) {
-    redirect("/login")
-  }
+
   return (
     <div className="space-y-4">
       <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">

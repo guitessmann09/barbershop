@@ -12,6 +12,8 @@ import { headers } from "next/headers"
 import { getUserData } from "@/app/_actions/get-user-data"
 import BreadcrumbDashboard from "./_components/breadcrumb-dashboard"
 import { Separator } from "@/components/ui/separator"
+import { redirect } from "next/navigation"
+import { db } from "@/lib/prisma"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,6 +26,21 @@ export default async function DashboardLayout({
     headers: headers(),
   })
   const user = session ? await getUserData(session.session) : null
+
+  const getCredential = await db.account.findFirst({
+    where: {
+      userId: session?.user.id,
+    },
+    select: {
+      providerId: true,
+    },
+  })
+
+  console.log(getCredential)
+
+  if (getCredential?.providerId != "credential" || !session?.user.id) {
+    redirect("/home")
+  }
 
   return (
     <html lang="pt-BR">
