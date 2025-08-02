@@ -6,7 +6,6 @@ import {
   getConfirmedAppointments,
   getCompletedAppointments,
 } from "@/app/_constants/get-appointments"
-import getUserWithProvider from "../_helpers/get-user-with-provider"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { getUserData } from "../_actions/get-user-data"
@@ -28,7 +27,8 @@ const Appointments = async () => {
 
   return (
     <div>
-      <Header {...user} />
+      {/* Removido o prop 'user' pois o componente Header não aceita essa propriedade */}
+      <Header />
       <div className="p-5 lg:px-32">
         <div>
           <h2 className="text-xl font-bold">Agendamentos</h2>

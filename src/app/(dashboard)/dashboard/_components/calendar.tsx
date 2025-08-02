@@ -1,20 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/prisma"
-import { Clock, Plus, User } from "lucide-react"
+import { Clock, StarIcon, User } from "lucide-react"
 import Image from "next/image"
 import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Separator } from "@/components/ui/separator"
-import { Barber } from "@prisma/client"
 import { Dialog } from "@radix-ui/react-dialog"
-import { createAppointment } from "@/app/_actions/create-appointments"
-import {
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { DialogTrigger } from "@/components/ui/dialog"
 import CalendarAppointmentForm from "./calendar-appointment-form"
 import { Badge } from "@/components/ui/badge"
 
@@ -31,8 +22,15 @@ const Calendar = async () => {
       user: {
         select: {
           name: true,
+          subscriptionId: true,
         },
       },
+    },
+  })
+  const services = await db.service.findMany({})
+  const clients = await db.user.findMany({
+    where: {
+      employee: null,
     },
   })
 
@@ -47,14 +45,15 @@ const Calendar = async () => {
     }
     return slots
   }
-
   const timeSlots = generateTimeSlots()
 
   const getAppointmentByBarber = (barberId: number, time: string) => {
     return appointments.find(
       (appointment) =>
         appointment.barberId === barberId &&
-        format(appointment.date, "HH:mm") === time,
+        format(appointment.date, "HH:mm") === time &&
+        format(appointment.date, "dd/MM/yyyy") ===
+          format(new Date(), "dd/MM/yyyy"),
     )
   }
 
@@ -70,7 +69,12 @@ const Calendar = async () => {
         "HH:mm",
       )
 
-      return time >= appointmentTime && time < appointmentEndTime
+      return (
+        time >= appointmentTime &&
+        time < appointmentEndTime &&
+        format(appointment.date, "dd/MM/yyyy") ===
+          format(new Date(), "dd/MM/yyyy")
+      )
     })
   }
 
@@ -103,7 +107,10 @@ const Calendar = async () => {
           <div className="min-w-[800px]">
             {/* Header */}
             <div
-              className={`mb-4 grid grid-cols-${barbers.length + 1} gap-2 border-b pb-4`}
+              className={`mb-4 grid gap-2 border-b pb-4`}
+              style={{
+                gridTemplateColumns: `minmax(60px, auto) repeat(${barbers.length}, minmax(0, 1fr))`,
+              }}
             >
               <div className="p-2 font-semibold text-muted-foreground">
                 Horário
@@ -134,7 +141,10 @@ const Calendar = async () => {
               {timeSlots.map((time) => (
                 <div
                   key={time}
-                  className={`grid grid-cols-${barbers.length + 1} gap-2`}
+                  className={`grid gap-2`}
+                  style={{
+                    gridTemplateColumns: `minmax(60px, auto) repeat(${barbers.length}, minmax(0, 1fr))`,
+                  }}
                 >
                   <div className="border-r p-2 text-sm text-muted-foreground">
                     {time}
@@ -159,15 +169,30 @@ const Calendar = async () => {
                           <Dialog>
                             <DialogTrigger asChild>
                               <div
-                                className={`absolute left-0 right-0 top-0 z-10 cursor-pointer overflow-hidden rounded border p-2 text-xs transition-opacity hover:opacity-80`}
+                                className={`absolute left-0 right-0 top-0 z-10 cursor-pointer overflow-hidden rounded border p-2 text-xs transition-opacity hover:opacity-80 ${
+                                  appointmentByBarber.user.subscriptionId
+                                    ? "bg-primary-foreground"
+                                    : "bg-muted"
+                                }`}
                                 style={{
                                   height: `${calculateSlotsForAppointment(appointmentByBarber.service.durationMinutes) * 41 - 1}px`,
                                 }}
                               >
                                 <div className="flex h-full flex-col justify-between overflow-hidden">
                                   <div className="min-h-0 flex-1">
-                                    <div className="truncate font-semibold leading-tight">
-                                      {appointmentByBarber.user.name}
+                                    <div className="flex items-center justify-between">
+                                      <div className="truncate font-semibold leading-tight">
+                                        {appointmentByBarber.user.name}
+                                      </div>
+                                      {appointmentByBarber.user
+                                        .subscriptionId && (
+                                        <Badge>
+                                          <StarIcon
+                                            className="text-muted"
+                                            size={16}
+                                          />
+                                        </Badge>
+                                      )}
                                     </div>
                                     <div className="truncate text-xs leading-tight">
                                       {appointmentByBarber.service.name}
@@ -202,7 +227,12 @@ const Calendar = async () => {
                             </DialogTrigger>
                           </Dialog>
                         ) : isAvailable ? (
-                          <CalendarAppointmentForm />
+                          <CalendarAppointmentForm
+                            barberName={barber.name}
+                            time={time}
+                            services={services}
+                            clients={clients}
+                          />
                         ) : null}
                       </div>
                     )

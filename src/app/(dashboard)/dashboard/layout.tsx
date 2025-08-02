@@ -35,9 +35,6 @@ export default async function DashboardLayout({
       providerId: true,
     },
   })
-
-  console.log(getCredential)
-
   if (getCredential?.providerId != "credential" || !session?.user.id) {
     redirect("/home")
   }
