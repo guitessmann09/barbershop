@@ -1,8 +1,12 @@
 import { Barber, Appointment, Service } from "@prisma/client"
 import AppointmentItem from "./appointment-item"
 
+type AppointmentWithServices = Appointment & {
+  services: Service[]
+}
+
 interface AppointmentComponentProps {
-  confirmedAppointments: Appointment[]
+  confirmedAppointments: AppointmentWithServices[]
   services: Service[]
   barbers: Barber[]
 }

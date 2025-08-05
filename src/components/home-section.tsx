@@ -10,9 +10,13 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { getUserData } from "@/app/_actions/get-user-data"
 
+type AppointmentWithServices = Appointment & {
+  services: Service[]
+}
+
 interface HomeSectionProps {
   className?: ClassValue
-  confirmedAppointments: Appointment[]
+  confirmedAppointments: AppointmentWithServices[]
   services: Service[]
   barbers: Barber[]
 }
@@ -56,7 +60,7 @@ const HomeSection = async ({
                 services={services}
                 barbers={barbers}
               />
-            ) : !user?.subscriptionID || !session ? (
+            ) : !user?.subscriptionId || !session ? (
               <AnimatedBanner />
             ) : (
               <div className="mt-3">
