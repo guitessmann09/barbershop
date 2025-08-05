@@ -17,7 +17,7 @@ const Home = async () => {
   })
 
   const user = session?.session ? await getUserData(session.session) : undefined
-  const { services, barbers, appointments, availableDays } = await getData()
+  const { services, barbers, appointments } = await getData()
 
   const confirmedAppointments = await getConfirmedAppointments(appointments)
 
@@ -84,12 +84,7 @@ const Home = async () => {
         </h2>
         <div className="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 xl:grid-cols-3">
           {services.map((service) => (
-            <ServiceItem
-              key={service.id}
-              service={service}
-              barbers={barbers}
-              availableDays={availableDays}
-            />
+            <ServiceItem key={service.id} service={service} barbers={barbers} />
           ))}
         </div>
       </div>

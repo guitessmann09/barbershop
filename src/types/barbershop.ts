@@ -8,7 +8,6 @@ export interface BarberWithAppointments
 export interface ServiceItemProps {
   service: Service
   barbers: BarberWithAppointments[]
-  availableDays: { weekday: number; barberId: number }[]
 }
 
 export interface AppointmentFormData {

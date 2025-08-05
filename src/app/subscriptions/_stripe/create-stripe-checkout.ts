@@ -1,6 +1,5 @@
 "use server"
-
-import getUserWithProvider from "@/app/_helpers/get-user-with-provider"
+import { getUserData } from "@/app/_actions/get-user-data"
 import { db } from "@/lib/prisma"
 import { headers } from "next/headers"
 import Stripe from "stripe"
@@ -19,8 +18,8 @@ export const createStripeCheckoutBySubscription = async ({
   if (!userId) {
     throw new Error("Não autorizado")
   }
-  const user = await getUserWithProvider({ userId })
-  if (user?.subscription) {
+  const user = await db.user.findUnique({ where: { id: userId } })
+  if (user?.subscriptionId) {
     throw new Error("Usuário já possui uma assinatura ativa")
   }
   if (!process.env.STRIPE_SECRET_KEY) {

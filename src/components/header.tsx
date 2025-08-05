@@ -20,7 +20,7 @@ const Header = async () => {
   return (
     <Card className="border-none bg-transparent">
       <CardContent className="flex items-center justify-between p-5 lg:px-32">
-        <Link href="/" className="cursor-pointer">
+        <Link href="/home" className="cursor-pointer">
           <Image src="/logo.png" alt="Dandy's Den" width={130} height={130} />
         </Link>
         <Sheet>

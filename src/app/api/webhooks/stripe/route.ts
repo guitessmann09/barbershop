@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         id: userId,
       },
       data: {
-        subscriptionID: Number(subscriptionId),
+        subscriptionId: Number(subscriptionId),
         stripeUserId: customerId,
       },
     })
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
           id: user.id,
         },
         data: {
-          subscriptionID: null,
+          subscriptionId: null,
         },
       })
     }
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
         },
         data: {
           stripeUserId: null,
-          subscriptionID: null,
+          subscriptionId: null,
         },
       })
     }

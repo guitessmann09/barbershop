@@ -16,7 +16,7 @@ const SubscriptionsPage = async () => {
   const { subscriptions } = await getData()
   return (
     <>
-      <Header {...user} />
+      <Header />
       <div className="p-5 lg:px-32">
         <div className="flex flex-row items-center justify-between">
           <h2 className="text-xl font-bold">Clube de Cavalheiros</h2>
@@ -85,7 +85,7 @@ const SubscriptionsPage = async () => {
                   key={subscription.id}
                   subscription={subscription}
                   userId={user?.id as string}
-                  userSubscriptionId={user?.subscription?.id}
+                  userSubscriptionId={user?.subscriptionId || undefined}
                 />
               ))}
           </div>
