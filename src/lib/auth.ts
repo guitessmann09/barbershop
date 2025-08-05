@@ -5,6 +5,7 @@ import { admin } from "better-auth/plugins"
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "sqlite" }),
+  secret: process.env.BETTER_AUTH_SECRET as string,
   emailAndPassword: {
     enabled: true,
   },
