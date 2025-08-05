@@ -34,17 +34,17 @@ const quickSideBarMainMenuItem: QuickSideBarMenuItems[] = [
 const quickSideBarCashierMenuItem: QuickSideBarMenuItems[] = [
   {
     title: "Novo Atendimento",
-    url: "/caixa/novo",
+    url: "/dashboard/caixa/novo",
     icon: Scissors,
   },
   {
     title: "Vendas do Dia",
-    url: "/caixa/vendas",
+    url: "/dashboard/caixa/vendas",
     icon: DollarSign,
   },
   {
     title: "Histórico",
-    url: "/caixa/historico",
+    url: "/dashboard/caixa/historico",
     icon: Clock,
   },
 ]
@@ -52,17 +52,17 @@ const quickSideBarCashierMenuItem: QuickSideBarMenuItems[] = [
 const quickSideBarStockMenuItem: QuickSideBarMenuItems[] = [
   {
     title: "Produtos",
-    url: "/estoque/produtos",
+    url: "/dashboard/estoque/produtos",
     icon: Package,
   },
   {
     title: "Entrada/Saída",
-    url: "/estoque/movimentacao",
+    url: "/dashboard/estoque/movimentacao",
     icon: Package2,
   },
   {
     title: "Relatórios",
-    url: "/estoque/relatorios",
+    url: "/dashboard/estoque/relatorios",
     icon: BarChart3,
   },
 ]
@@ -75,7 +75,7 @@ const quickSideBarEmployeeMenuItem: QuickSideBarMenuItems[] = [
   },
   {
     title: "Comissões",
-    url: "/funcionarios/comissoes",
+    url: "/dashboard/funcionarios/comissoes",
     icon: CreditCard,
   },
 ]
