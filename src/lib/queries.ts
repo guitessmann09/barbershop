@@ -19,7 +19,11 @@ export const getData = async () => {
           },
         },
       }),
-      db.appointment.findMany(),
+      db.appointment.findMany({
+        include: {
+          services: true,
+        },
+      }),
       db.user.findMany(),
       db.subscription.findMany({
         include: {

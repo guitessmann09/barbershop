@@ -1,10 +1,14 @@
 import { auth } from "@/lib/auth"
-import { Appointment } from "@prisma/client"
+import { Appointment, Service } from "@prisma/client"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { headers } from "next/headers"
 
-const getUserAppointments = async (appointments: Appointment[]) => {
+type AppointmentWithServices = Appointment & {
+  services: Service[]
+}
+
+const getUserAppointments = async (appointments: AppointmentWithServices[]) => {
   const session = await auth.api.getSession({
     headers: headers(),
   })
@@ -13,14 +17,18 @@ const getUserAppointments = async (appointments: Appointment[]) => {
   )
 }
 
-export const getConfirmedAppointments = async (appointments: Appointment[]) => {
+export const getConfirmedAppointments = async (
+  appointments: AppointmentWithServices[],
+) => {
   const userAppointments = await getUserAppointments(appointments)
   return userAppointments
     .filter((appointment) => appointment.date > new Date())
     .sort((a, b) => b.date.getTime() - a.date.getTime())
 }
 
-export const getCompletedAppointments = async (appointments: Appointment[]) => {
+export const getCompletedAppointments = async (
+  appointments: AppointmentWithServices[],
+) => {
   const userAppointments = await getUserAppointments(appointments)
   return userAppointments
     .filter((appointment) => appointment.date < new Date())
@@ -30,7 +38,9 @@ export const getCompletedAppointments = async (appointments: Appointment[]) => {
 const today = new Date()
 const todayString = format(today, "dd/MM/yyyy", { locale: ptBR })
 
-export const getTodayAppointments = (myAppointments: Appointment[]) =>
+export const getTodayAppointments = (
+  myAppointments: AppointmentWithServices[],
+) =>
   myAppointments
     .filter((appointment) => {
       const appointmentDate = new Date(appointment.date)
@@ -40,7 +50,9 @@ export const getTodayAppointments = (myAppointments: Appointment[]) =>
     })
     .sort((a, b) => a.date.getTime() - b.date.getTime())
 
-export const getInComingAppointments = (todayAppointments: Appointment[]) =>
+export const getInComingAppointments = (
+  todayAppointments: AppointmentWithServices[],
+) =>
   todayAppointments
     .filter((appointment) => {
       const appointmentDate = new Date(appointment.date)
@@ -48,7 +60,9 @@ export const getInComingAppointments = (todayAppointments: Appointment[]) =>
     })
     .sort((a, b) => a.date.getTime() - b.date.getTime())
 
-export const getFutureAppointments = (myAppointments: Appointment[]) =>
+export const getFutureAppointments = (
+  myAppointments: AppointmentWithServices[],
+) =>
   myAppointments
     .filter((appointment) => {
       const appointmentDate = new Date(appointment.date)

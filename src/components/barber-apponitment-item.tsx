@@ -34,7 +34,9 @@ import { deleteAppointment } from "@/app/_actions/delete-appointments"
 import { toast } from "sonner"
 
 interface BarberAppointmentItemProps {
-  appointment: Appointment
+  appointment: Appointment & {
+    services: Service[]
+  }
   services: Service[]
   users: User[]
   isFuture?: boolean
@@ -82,9 +84,7 @@ const BarberAppointmentItem = ({
 
   const userName = users.find((user) => user.id === appointment.userId)?.name
 
-  const serviceName = services.find(
-    (service) => service.id === appointment.serviceId,
-  )?.name
+  const serviceName = appointment.services[0]?.name || "Serviço não encontrado"
 
   return (
     <>
