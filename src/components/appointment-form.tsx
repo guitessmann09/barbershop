@@ -23,26 +23,11 @@ import {
 } from "@/app/_helpers/get-discount"
 import { getUserData, UserData } from "@/app/_actions/get-user-data"
 import { calculateDiscountAction } from "@/app/_actions/calculate-discount"
+import {
+  getAvailableTimes,
+  AvailableTime,
+} from "@/app/_actions/get-available-times"
 import { useSession } from "@/app/_providers/auth-client"
-
-const TIME_LIST = [
-  "08:00",
-  "08:45",
-  "09:30",
-  "10:15",
-  "11:00",
-  "11:45",
-  "12:30",
-  "13:15",
-  "14:00",
-  "14:45",
-  "15:30",
-  "16:15",
-  "17:00",
-  "17:45",
-  "18:30",
-  "19:15",
-]
 
 interface AppointmentFormProps {
   service: Service
@@ -51,7 +36,6 @@ interface AppointmentFormProps {
   onDaySelect: (date: Date | undefined) => void
   onTimeSelect: (time: string) => void
   onBarberSelect: (barber: Barber) => void
-  availableDays: { weekday: number; barberId: number }[]
 }
 
 export function AppointmentForm({
@@ -61,7 +45,6 @@ export function AppointmentForm({
   onDaySelect,
   onTimeSelect,
   onBarberSelect,
-  availableDays,
 }: AppointmentFormProps) {
   const { selectedDay, selectedTime, selectedBarber } = formData
   const [userData, setUserData] = useState<UserData | null>(null)
@@ -70,6 +53,7 @@ export function AppointmentForm({
     isFree: boolean
     reason: string
   } | null>(null)
+  const [availableTimes, setAvailableTimes] = useState<AvailableTime[]>([])
 
   const session = useSession()
 
@@ -113,60 +97,46 @@ export function AppointmentForm({
     calculateDiscount()
   }, [userData, selectedDay, service])
 
+  // Buscar horários disponíveis quando a data é selecionada
+  useEffect(() => {
+    const fetchAvailableTimes = async () => {
+      if (!selectedDay) {
+        setAvailableTimes([])
+        return
+      }
+
+      try {
+        const times = await getAvailableTimes(
+          selectedDay,
+          service.durationMinutes,
+        )
+        setAvailableTimes(times)
+      } catch (error) {
+        console.error("Erro ao buscar horários disponíveis:", error)
+        setAvailableTimes([])
+      }
+    }
+
+    fetchAvailableTimes()
+  }, [selectedDay, service.durationMinutes])
+
   const availableBarbers = useMemo(() => {
     if (!selectedDay || !selectedTime) return []
 
-    const [hour, minute] = selectedTime.split(":").map(Number)
-    const selectedDateTime = set(selectedDay, {
-      hours: hour,
-      minutes: minute,
-      seconds: 0,
-      milliseconds: 0,
-    })
-
-    const weekDay = selectedDateTime.getDay()
-
-    const hasBarbersForWeekDay = availableDays.some(
-      (day) => day.weekday === weekDay,
+    // Encontrar o horário selecionado nos horários disponíveis
+    const selectedTimeSlot = availableTimes.find(
+      (timeSlot) => timeSlot.time === selectedTime,
     )
 
-    if (!hasBarbersForWeekDay) return []
+    if (!selectedTimeSlot) return []
 
-    return barbers.filter((barber) => {
-      const worksOnThisDay = availableDays.some(
-        (day) => day.weekday === weekDay && day.barberId === barber.id,
-      )
+    // Filtrar barbeiros que estão disponíveis neste horário
+    return barbers.filter((barber) =>
+      selectedTimeSlot.availableBarbers.includes(barber.id),
+    )
+  }, [barbers, selectedDay, selectedTime, availableTimes])
 
-      if (!worksOnThisDay) return false
-
-      const isBooked = barber.appointments.some((appointment) =>
-        isEqual(new Date(appointment.date), selectedDateTime),
-      )
-
-      return !isBooked
-    })
-  }, [barbers, selectedDay, selectedTime, availableDays])
-
-  const availableTimes = useMemo(() => {
-    if (!selectedDay) return TIME_LIST
-
-    const now = new Date()
-
-    if (isSameDay(selectedDay, now)) {
-      return TIME_LIST.filter((time) => {
-        const [hour, minute] = time.split(":").map(Number)
-        const timeToCheck = set(now, {
-          hours: hour,
-          minutes: minute,
-          seconds: 0,
-          milliseconds: 0,
-        })
-        return isAfter(timeToCheck, now)
-      })
-    }
-
-    return TIME_LIST
-  }, [selectedDay])
+  console.log(availableTimes)
 
   const originalPrice = Number(service.price)
   const finalPrice = discountInfo
@@ -216,17 +186,17 @@ export function AppointmentForm({
       {selectedDay && (
         <div className="flex gap-3 overflow-x-scroll border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
           {availableTimes.length > 0 ? (
-            availableTimes.map((time) => (
+            availableTimes.map((timeSlot) => (
               <Button
-                key={time}
-                variant={selectedTime === time ? "default" : "outline"}
+                key={timeSlot.time}
+                variant={selectedTime === timeSlot.time ? "default" : "outline"}
                 className="w-full rounded-full border"
                 onClick={() => {
-                  onTimeSelect(time)
+                  onTimeSelect(timeSlot.time)
                   onBarberSelect(undefined as any)
                 }}
               >
-                {time}
+                {timeSlot.time}
               </Button>
             ))
           ) : (

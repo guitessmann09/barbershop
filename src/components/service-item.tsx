@@ -14,7 +14,7 @@ import { set } from "date-fns"
 import LoginDialog from "./login-dialog"
 import { useSession } from "@/app/_providers/auth-client"
 
-const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
+const ServiceItem = ({ service, barbers }: ServiceItemProps) => {
   const router = useRouter()
   const { data } = useSession()
   const [loginDialogIsOpen, setLoginDialogIsOpen] = useState(false)
@@ -37,7 +37,8 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
 
   const handleCreateAppointment = async () => {
     const { selectedDay, selectedTime, selectedBarber } = formData
-    if (!selectedDay || !selectedTime || !selectedBarber) return
+    if (!data?.user.id || !selectedDay || !selectedTime || !selectedBarber)
+      return
 
     try {
       const hour = Number(selectedTime.split(":")[0])
@@ -48,7 +49,8 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
       })
 
       await createAppointment({
-        serviceId: service.id,
+        userId: data?.user.id,
+        services: [service],
         barberId: selectedBarber?.id,
         date: newDate,
       })
@@ -108,7 +110,6 @@ const ServiceItem = ({ service, barbers, availableDays }: ServiceItemProps) => {
                   service={service}
                   barbers={barbers}
                   formData={formData}
-                  availableDays={availableDays}
                   onDaySelect={(date) =>
                     setFormData((prev) => ({ ...prev, selectedDay: date }))
                   }

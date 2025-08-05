@@ -13,7 +13,7 @@ const Calendar = async () => {
   const barbers = await db.barber.findMany({})
   const appointments = await db.appointment.findMany({
     include: {
-      service: {
+      services: {
         select: {
           name: true,
           durationMinutes: true,
@@ -64,8 +64,12 @@ const Calendar = async () => {
       const appointmentTime = format(appointment.date, "HH:mm")
       const [hour, minute] = appointmentTime.split(":").map(Number)
       const appointmentDate = new Date(0, 0, 0, hour, minute)
+      const totalDuration = appointment.services.reduce(
+        (sum, service) => sum + service.durationMinutes,
+        0,
+      )
       const appointmentEndTime = format(
-        addMinutes(appointmentDate, appointment.service.durationMinutes),
+        addMinutes(appointmentDate, totalDuration),
         "HH:mm",
       )
 
@@ -77,18 +81,13 @@ const Calendar = async () => {
       )
     })
   }
-
-  const isSlotAvailable = (barberId: number, time: string) => {
-    return !isSlotOccupiedByAppointment(barberId, time)
-  }
-
   const calculateSlotsForAppointment = (duration: number) => {
     return Math.ceil(duration / 10) // Cada slot é de 10 minutos
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="flex h-full flex-col">
+      <CardHeader className="space-y-4">
         <CardTitle className="flex items-center gap-2">
           <Clock />
           <p>
@@ -101,43 +100,39 @@ const Calendar = async () => {
             </span>
           </p>
         </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-screen overflow-y-scroll [&::-webkit-scrollbar]:hidden">
-          <div className="min-w-[800px]">
-            {/* Header */}
-            <div
-              className={`mb-4 grid gap-2 border-b pb-4`}
-              style={{
-                gridTemplateColumns: `minmax(60px, auto) repeat(${barbers.length}, minmax(0, 1fr))`,
-              }}
-            >
-              <div className="p-2 font-semibold text-muted-foreground">
-                Horário
-              </div>
-              {barbers.map((barber) => (
-                <div key={barber.id} className="text-center">
-                  <div className="flex items-center justify-center gap-4 font-semibold">
-                    {!barber.imageUrl ? (
-                      <User className="h-10 w-10 rounded-full bg-secondary p-2" />
-                    ) : (
-                      <div className="relative h-10 w-10">
-                        <Image
-                          src={barber?.imageUrl || ""}
-                          alt={barber.name}
-                          fill
-                          className="rounded-full object-cover"
-                        />
-                      </div>
-                    )}
-                    {barber.name}
+        <div
+          className={`mb-4 grid gap-2 border-b pb-4`}
+          style={{
+            gridTemplateColumns: `minmax(60px, auto) repeat(${barbers.length}, minmax(0, 1fr))`,
+          }}
+        >
+          <div className="p-2 font-semibold text-muted-foreground">Horário</div>
+          {barbers.map((barber) => (
+            <div key={barber.id} className="text-center">
+              <div className="flex items-center justify-center gap-4 font-semibold">
+                {!barber.imageUrl ? (
+                  <User className="h-10 w-10 rounded-full bg-secondary p-2" />
+                ) : (
+                  <div className="relative h-10 w-10">
+                    <Image
+                      src={barber?.imageUrl || ""}
+                      alt={barber.name}
+                      fill
+                      className="rounded-full object-cover"
+                    />
                   </div>
-                </div>
-              ))}
+                )}
+                {barber.name}
+              </div>
             </div>
-
+          ))}
+        </div>
+      </CardHeader>
+      <CardContent className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden">
+          <div className="min-w-[800px]">
             {/* Grid de Horarios */}
-            <div className="space-y-1 overflow-y-auto">
+            <div className="space-y-1">
               {timeSlots.map((time) => (
                 <div
                   key={time}
@@ -175,7 +170,7 @@ const Calendar = async () => {
                                     : "bg-muted"
                                 }`}
                                 style={{
-                                  height: `${calculateSlotsForAppointment(appointmentByBarber.service.durationMinutes) * 41 - 1}px`,
+                                  height: `${calculateSlotsForAppointment(appointmentByBarber.services.reduce((sum, s) => sum + s.durationMinutes, 0)) * 41 - 1}px`,
                                 }}
                               >
                                 <div className="flex h-full flex-col justify-between overflow-hidden">
@@ -195,7 +190,9 @@ const Calendar = async () => {
                                       )}
                                     </div>
                                     <div className="truncate text-xs leading-tight">
-                                      {appointmentByBarber.service.name}
+                                      {appointmentByBarber.services
+                                        .map((service) => service.name)
+                                        .join(", ")}
                                     </div>
                                     <div className="mt-1 truncate text-xs leading-tight text-muted-foreground">
                                       {format(
@@ -207,8 +204,10 @@ const Calendar = async () => {
                                       {format(
                                         addMinutes(
                                           appointmentByBarber.date,
-                                          appointmentByBarber.service
-                                            .durationMinutes,
+                                          appointmentByBarber.services.reduce(
+                                            (sum, s) => sum + s.durationMinutes,
+                                            0,
+                                          ),
                                         ),
                                         "HH:mm",
                                       )}
@@ -229,6 +228,7 @@ const Calendar = async () => {
                         ) : isAvailable ? (
                           <CalendarAppointmentForm
                             barberName={barber.name}
+                            barberId={barber.id}
                             time={time}
                             services={services}
                             clients={clients}

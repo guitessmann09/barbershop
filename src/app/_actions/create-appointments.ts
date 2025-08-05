@@ -4,9 +4,11 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/prisma"
 import { headers } from "next/headers"
 import { getUserData } from "./get-user-data"
+import { Service } from "@prisma/client"
 
 interface CreateAppointmentParams {
-  serviceId: string
+  userId: string
+  services: Service[]
   barberId: number
   date: Date
 }
@@ -22,8 +24,12 @@ export const createAppointment = async (params: CreateAppointmentParams) => {
 
   await db.appointment.create({
     data: {
-      ...params,
-      userId: user.id,
+      userId: params.userId,
+      barberId: params.barberId,
+      date: params.date,
+      services: {
+        connect: params.services.map((service) => ({ id: service.id })),
+      },
     },
   })
 }

@@ -1,9 +1,8 @@
-import { db } from "@/lib/prisma"
 import Calendar from "../_components/calendar"
 
 const AgendaPage = async () => {
   return (
-    <div>
+    <div className="h-[calc(100vh-8rem)]">
       <Calendar></Calendar>
     </div>
   )
