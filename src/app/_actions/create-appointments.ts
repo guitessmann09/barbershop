@@ -22,14 +22,40 @@ export const createAppointment = async (params: CreateAppointmentParams) => {
     throw new Error("Unauthorized")
   }
 
-  await db.appointment.create({
+  const total = params.services.reduce((sum, service) => {
+    return sum + Number(service.price)
+  }, 0)
+
+  const order = await db.order.create({
+    data: {
+      userId: params.userId,
+      total: total,
+    },
+  })
+
+  const appointment = await db.appointment.create({
     data: {
       userId: params.userId,
       barberId: params.barberId,
       date: params.date,
-      services: {
-        connect: params.services.map((service) => ({ id: service.id })),
-      },
+      orderId: order.id,
+      total: total,
     },
   })
+
+  await db.order.update({
+    where: { id: order.id },
+    data: { appointmentId: appointment.id },
+  })
+
+  const appointmentServices = params.services.map((service) => ({
+    appointmentId: appointment.id,
+    serviceId: service.id,
+  }))
+
+  await db.appointmentService.createMany({
+    data: appointmentServices,
+  })
+
+  return appointment
 }

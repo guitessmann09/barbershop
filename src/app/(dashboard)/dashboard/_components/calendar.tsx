@@ -14,9 +14,8 @@ const Calendar = async () => {
   const appointments = await db.appointment.findMany({
     include: {
       services: {
-        select: {
-          name: true,
-          durationMinutes: true,
+        include: {
+          service: true,
         },
       },
       user: {
@@ -65,7 +64,7 @@ const Calendar = async () => {
       const [hour, minute] = appointmentTime.split(":").map(Number)
       const appointmentDate = new Date(0, 0, 0, hour, minute)
       const totalDuration = appointment.services.reduce(
-        (sum, service) => sum + service.durationMinutes,
+        (sum, service) => sum + service.service.durationMinutes,
         0,
       )
       const appointmentEndTime = format(
@@ -170,7 +169,7 @@ const Calendar = async () => {
                                     : "bg-muted"
                                 }`}
                                 style={{
-                                  height: `${calculateSlotsForAppointment(appointmentByBarber.services.reduce((sum, s) => sum + s.durationMinutes, 0)) * 41 - 1}px`,
+                                  height: `${calculateSlotsForAppointment(appointmentByBarber.services.reduce((sum, s) => sum + s.service.durationMinutes, 0)) * 41 - 1}px`,
                                 }}
                               >
                                 <div className="flex h-full flex-col justify-between overflow-hidden">
@@ -191,7 +190,7 @@ const Calendar = async () => {
                                     </div>
                                     <div className="truncate text-xs leading-tight">
                                       {appointmentByBarber.services
-                                        .map((service) => service.name)
+                                        .map((service) => service.service.name)
                                         .join(", ")}
                                     </div>
                                     <div className="mt-1 truncate text-xs leading-tight text-muted-foreground">
@@ -205,7 +204,8 @@ const Calendar = async () => {
                                         addMinutes(
                                           appointmentByBarber.date,
                                           appointmentByBarber.services.reduce(
-                                            (sum, s) => sum + s.durationMinutes,
+                                            (sum, s) =>
+                                              sum + s.service.durationMinutes,
                                             0,
                                           ),
                                         ),

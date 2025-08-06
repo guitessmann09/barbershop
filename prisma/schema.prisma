@@ -56,7 +56,7 @@ enum Status {
 }
 
 model Order {
-  id            String   @id @default(uuid())
+  id            Int      @id @default(autoincrement())
   userId        String
   appointmentId String?  @unique
   total         Decimal  @db.Decimal(10, 2)
@@ -69,7 +69,7 @@ model Order {
 
 model OrderItem {
   id        String  @id @default(uuid())
-  orderId   String
+  orderId   Int
   productId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
@@ -93,7 +93,7 @@ model Appointment {
   userId    String
   date      DateTime
   barberId  Int
-  orderId   String               @unique
+  orderId   Int                  @unique
   total     Decimal              @db.Decimal(10, 2)
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
