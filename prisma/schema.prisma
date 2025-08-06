@@ -18,35 +18,36 @@ model User {
   stripeUserId   String?
   emailVerified  Boolean
   subscriptionId Int?
-  appointments   Appointment[]
   employee       Employee?
   accounts       Account[]
   sessions       Session[]
   barber         Barber?
-  Subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  orders         Order[]
+  appointments   Appointment[]
 
   @@map("user")
 }
 
 model Service {
-  id              String        @id @default(uuid())
-  name            String
-  description     String
-  price           Decimal       @db.Decimal(10, 2)
-  imageURL        String
-  durationMinutes Int           @default(30)
-  appointments    Appointment[]
+  id                 String               @id @default(uuid())
+  name               String
+  description        String
+  price              Decimal              @db.Decimal(10, 2)
+  imageURL           String
+  durationMinutes    Int                  @default(30)
+  appointmentService AppointmentService[]
 }
 
 model Product {
-  id              String        @id @default(uuid())
+  id              String      @id @default(uuid())
   name            String
-  price           Decimal       @db.Decimal(10, 2)
-  quantityInStock Int           @default(0)
-  status          Status        @default(outOfStock)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  appointments    Appointment[]
+  price           Decimal     @db.Decimal(10, 2)
+  quantityInStock Int         @default(0)
+  status          Status      @default(outOfStock)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItem       OrderItem[]
 }
 
 enum Status {
@@ -54,17 +55,52 @@ enum Status {
   outOfStock
 }
 
+model Order {
+  id            String   @id @default(uuid())
+  userId        String
+  appointmentId String?  @unique
+  total         Decimal  @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id])
+  appointment Appointment?
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model AppointmentService {
+  appointmentId String
+  serviceId     String
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+  service     Service     @relation(fields: [serviceId], references: [id])
+
+  @@id([appointmentId, serviceId])
+}
+
 model Appointment {
-  id        String    @id @default(uuid())
+  id        String               @id @default(uuid())
   userId    String
   date      DateTime
   barberId  Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  services  Service[]
-  products  Product[]
-  barber    Barber    @relation(fields: [barberId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId   String               @unique
+  total     Decimal              @db.Decimal(10, 2)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  services  AppointmentService[]
+  barber    Barber               @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order     Order                @relation(fields: [orderId], references: [id])
 }
 
 model Barber {
