@@ -19,11 +19,11 @@ import {
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Service, User } from "@prisma/client"
-import { Plus, Check } from "lucide-react"
+import { Plus } from "lucide-react"
 import { getFormattedCurrency } from "@/app/_helpers/format-currency"
 import { createAppointment } from "@/app/_actions/create-appointments"
 import { useState } from "react"
-import { format, set } from "date-fns"
+import { set } from "date-fns"
 import { toast } from "sonner"
 
 export interface CalendarAppointmentFormProps {

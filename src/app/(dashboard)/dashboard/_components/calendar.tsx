@@ -1,14 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/lib/prisma"
-import { Clock, StarIcon, User } from "lucide-react"
+import { Clock, User } from "lucide-react"
 import Image from "next/image"
 import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Dialog } from "@radix-ui/react-dialog"
-import { DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import CalendarAppointmentFormWrapper from "./calendar-appointment-form-wrapper"
-import { Badge } from "@/components/ui/badge"
 import CalendarAppointmentDialog from "./calendar-appointment-card"
+import CalendarAppointmentForm from "./calendar-appointment-form"
 
 const Calendar = async () => {
   const barbers = await db.barber.findMany({})
@@ -168,7 +165,7 @@ const Calendar = async () => {
                             allServices={services}
                           />
                         ) : isAvailable ? (
-                          <CalendarAppointmentFormWrapper
+                          <CalendarAppointmentForm
                             barberName={barber.name}
                             barberId={barber.id}
                             time={time}
