@@ -26,12 +26,13 @@ import { useState } from "react"
 import { format, set } from "date-fns"
 import { toast } from "sonner"
 
-interface CalendarAppointmentFormProps {
+export interface CalendarAppointmentFormProps {
   barberName: string
   barberId: number
   time: string
   services: Service[]
   clients: User[]
+  onAppointmentCreated?: () => void
 }
 
 const CalendarAppointmentForm = ({
@@ -40,6 +41,7 @@ const CalendarAppointmentForm = ({
   time,
   services,
   clients,
+  onAppointmentCreated,
 }: CalendarAppointmentFormProps) => {
   const [selectedClientId, setSelectedClientId] = useState<string>("")
   const [selectedServices, setSelectedServices] = useState<Service[]>([])
@@ -82,6 +84,10 @@ const CalendarAppointmentForm = ({
       })
 
       toast.success("Agendamento criado com sucesso!")
+      if (onAppointmentCreated) {
+        onAppointmentCreated()
+      }
+
       setIsOpen(false)
       setSelectedClientId("")
       setSelectedServices([])

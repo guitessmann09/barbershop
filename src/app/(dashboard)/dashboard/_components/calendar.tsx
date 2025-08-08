@@ -5,9 +5,10 @@ import Image from "next/image"
 import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Dialog } from "@radix-ui/react-dialog"
-import { DialogTrigger } from "@/components/ui/dialog"
-import CalendarAppointmentForm from "./calendar-appointment-form"
+import { DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import CalendarAppointmentFormWrapper from "./calendar-appointment-form-wrapper"
 import { Badge } from "@/components/ui/badge"
+import CalendarAppointmentDialog from "./calendar-appointment-card"
 
 const Calendar = async () => {
   const barbers = await db.barber.findMany({})
@@ -33,7 +34,6 @@ const Calendar = async () => {
     },
   })
 
-  // Gerar horários de 8:00 às 18:00 de 10 em 10 minutos
   const generateTimeSlots = () => {
     const slots = []
     for (let hour = 10; hour < 20; hour++) {
@@ -79,9 +79,6 @@ const Calendar = async () => {
           format(new Date(), "dd/MM/yyyy")
       )
     })
-  }
-  const calculateSlotsForAppointment = (duration: number) => {
-    return Math.ceil(duration / 10) // Cada slot é de 10 minutos
   }
 
   return (
@@ -159,74 +156,16 @@ const Calendar = async () => {
                         key={`${barber.id}-${time}`}
                         className="relative min-h-[40px]"
                       >
-                        {appointmentByBarber ? (
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <div
-                                className={`absolute left-0 right-0 top-0 z-10 cursor-pointer overflow-hidden rounded border p-2 text-xs transition-opacity hover:opacity-80 ${
-                                  appointmentByBarber.user.subscriptionId
-                                    ? "bg-primary-foreground"
-                                    : "bg-muted"
-                                }`}
-                                style={{
-                                  height: `${calculateSlotsForAppointment(appointmentByBarber.services.reduce((sum, s) => sum + s.service.durationMinutes, 0)) * 41 - 1}px`,
-                                }}
-                              >
-                                <div className="flex h-full flex-col justify-between overflow-hidden">
-                                  <div className="min-h-0 flex-1">
-                                    <div className="flex items-center justify-between">
-                                      <div className="truncate font-semibold leading-tight">
-                                        {appointmentByBarber.user.name}
-                                      </div>
-                                      {appointmentByBarber.user
-                                        .subscriptionId && (
-                                        <Badge>
-                                          <StarIcon
-                                            className="text-muted"
-                                            size={16}
-                                          />
-                                        </Badge>
-                                      )}
-                                    </div>
-                                    <div className="truncate text-xs leading-tight">
-                                      {appointmentByBarber.services
-                                        .map((service) => service.service.name)
-                                        .join(", ")}
-                                    </div>
-                                    <div className="mt-1 truncate text-xs leading-tight text-muted-foreground">
-                                      {format(
-                                        appointmentByBarber.date,
-                                        "HH:mm",
-                                        { locale: ptBR },
-                                      )}{" "}
-                                      -{" "}
-                                      {format(
-                                        addMinutes(
-                                          appointmentByBarber.date,
-                                          appointmentByBarber.services.reduce(
-                                            (sum, s) =>
-                                              sum + s.service.durationMinutes,
-                                            0,
-                                          ),
-                                        ),
-                                        "HH:mm",
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="mt-1 flex-shrink-0">
-                                    <Badge
-                                      variant="outline"
-                                      className="max-w-full truncate text-xs"
-                                    >
-                                      Confirmado
-                                    </Badge>
-                                  </div>
-                                </div>
-                              </div>
-                            </DialogTrigger>
-                          </Dialog>
+                        {appointmentByBarber &&
+                        appointmentByBarber.user.name ? (
+                          <CalendarAppointmentDialog
+                            {...appointmentByBarber}
+                            barberName={barber.name}
+                            barbers={barbers}
+                            allServices={services}
+                          />
                         ) : isAvailable ? (
-                          <CalendarAppointmentForm
+                          <CalendarAppointmentFormWrapper
                             barberName={barber.name}
                             barberId={barber.id}
                             time={time}
