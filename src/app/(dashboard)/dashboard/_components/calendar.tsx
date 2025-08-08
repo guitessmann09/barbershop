@@ -50,9 +50,9 @@ const Calendar = async () => {
     return appointments.find(
       (appointment) =>
         appointment.barberId === barberId &&
-        format(appointment.date, "HH:mm") === time &&
-        format(appointment.date, "dd/MM/yyyy") ===
-          format(new Date(), "dd/MM/yyyy"),
+        format(appointment.date, "HH:mm", { locale: ptBR }) === time &&
+        format(appointment.date, "dd/MM/yyyy", { locale: ptBR }) ===
+          format(new Date(), "dd/MM/yyyy", { locale: ptBR }),
     )
   }
 
@@ -60,7 +60,9 @@ const Calendar = async () => {
     return appointments.find((appointment) => {
       if (appointment.barberId !== barberId) return false
 
-      const appointmentTime = format(appointment.date, "HH:mm")
+      const appointmentTime = format(appointment.date, "HH:mm", {
+        locale: ptBR,
+      })
       const [hour, minute] = appointmentTime.split(":").map(Number)
       const appointmentDate = new Date(0, 0, 0, hour, minute)
       const totalDuration = appointment.services.reduce(
@@ -70,13 +72,14 @@ const Calendar = async () => {
       const appointmentEndTime = format(
         addMinutes(appointmentDate, totalDuration),
         "HH:mm",
+        { locale: ptBR },
       )
 
       return (
         time >= appointmentTime &&
         time < appointmentEndTime &&
-        format(appointment.date, "dd/MM/yyyy") ===
-          format(new Date(), "dd/MM/yyyy")
+        format(appointment.date, "dd/MM/yyyy", { locale: ptBR }) ===
+          format(new Date(), "dd/MM/yyyy", { locale: ptBR })
       )
     })
   }
