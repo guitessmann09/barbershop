@@ -15,10 +15,8 @@ const Appointments = async () => {
     headers: headers(),
   })
   if (!session?.user) {
-    redirect("/")
+    redirect("/home")
   }
-
-  const user = session ? await getUserData(session.session) : null
 
   const { appointments, services, barbers } = await getData()
 
