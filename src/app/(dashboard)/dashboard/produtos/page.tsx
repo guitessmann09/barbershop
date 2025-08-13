@@ -5,6 +5,7 @@ import { PlusIcon } from "lucide-react"
 import { DataTable } from "./_components/data-table"
 import { getProducts } from "@/app/_data-access/get-products"
 import { productColumns } from "./_components/columns"
+import CreateProductDialog from "./_components/create-product-dialog"
 
 const ProductsPage = async () => {
   const products = await getProducts()
@@ -17,14 +18,7 @@ const ProductsPage = async () => {
           </span>
           <h2 className="text-xl font-semibold">Gestão de produtos</h2>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <PlusIcon size={20} />
-              Novo produto
-            </Button>
-          </DialogTrigger>
-        </Dialog>
+        <CreateProductDialog />
       </CardHeader>
       <DataTable data={products} columns={productColumns} />
     </Card>
