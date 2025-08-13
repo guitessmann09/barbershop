@@ -1,4 +1,4 @@
-import Calendar from "../_components/calendar"
+import Calendar from "./_components/calendar"
 
 const AgendaPage = async () => {
   return (

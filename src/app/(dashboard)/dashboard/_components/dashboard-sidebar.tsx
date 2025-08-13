@@ -76,16 +76,6 @@ const DashboardSidebar = (user: UserProps) => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Caixa */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Frente de caixa</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarAppMenuItem
-              section={sidebarItems.quickSideBarCashierMenuItem}
-            />
-          </SidebarGroupContent>
-        </SidebarGroup>
-
         {/* Estoque */}
         <SidebarGroup>
           <SidebarGroupLabel>Estoque</SidebarGroupLabel>

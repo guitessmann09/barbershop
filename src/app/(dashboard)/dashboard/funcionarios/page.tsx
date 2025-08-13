@@ -1,4 +1,4 @@
-import SignUpUserForm from "../_components/sign-up-user-form"
+import SignUpUserForm from "./_components/sign-up-user-form"
 
 const EmployeesPage = () => {
   return (
