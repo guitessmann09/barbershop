@@ -44,27 +44,30 @@ model Product {
   name            String
   price           Decimal     @db.Decimal(10, 2)
   quantityInStock Int         @default(0)
-  status          Status      @default(outOfStock)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   orderItem       OrderItem[]
 }
 
-enum Status {
-  inStock
-  outOfStock
-}
-
 model Order {
-  id            Int      @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   userId        String
-  appointmentId String?  @unique
-  total         Decimal  @db.Decimal(10, 2)
-  createdAt     DateTime @default(now())
+  appointmentId String?        @unique
+  total         Decimal        @db.Decimal(10, 2)
+  paymentMethod PaymentMethod?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   user        User         @relation(fields: [userId], references: [id])
   appointment Appointment?
   items       OrderItem[]
+}
+
+enum PaymentMethod {
+  in_sight
+  pix
+  credit_card
+  debit_card
 }
 
 model OrderItem {
