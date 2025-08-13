@@ -25,6 +25,7 @@ import { createAppointment } from "@/app/_actions/create-appointments"
 import { useState } from "react"
 import { set } from "date-fns"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export interface CalendarAppointmentFormProps {
   barberName: string
@@ -43,6 +44,7 @@ const CalendarAppointmentForm = ({
   clients,
   onAppointmentCreated,
 }: CalendarAppointmentFormProps) => {
+  const route = useRouter()
   const [selectedClientId, setSelectedClientId] = useState<string>("")
   const [selectedServices, setSelectedServices] = useState<Service[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -84,10 +86,7 @@ const CalendarAppointmentForm = ({
       })
 
       toast.success("Agendamento criado com sucesso!")
-      if (onAppointmentCreated) {
-        onAppointmentCreated()
-      }
-
+      route.refresh()
       setIsOpen(false)
       setSelectedClientId("")
       setSelectedServices([])
