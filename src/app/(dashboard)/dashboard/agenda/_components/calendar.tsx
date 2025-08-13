@@ -45,8 +45,8 @@ const Calendar = async () => {
       (appointment) =>
         appointment.barberId === barberId &&
         format(appointment.date, "HH:mm", { locale: ptBR }) === time &&
-        format(appointment.date, "dd/MM/yyyy", { locale: ptBR }) ===
-          format(new Date(), "dd/MM/yyyy", { locale: ptBR }),
+        format(appointment.date, "HH:mm", { locale: ptBR }) ===
+          format(new Date(), "HH:mm", { locale: ptBR }),
     )
   }
 
