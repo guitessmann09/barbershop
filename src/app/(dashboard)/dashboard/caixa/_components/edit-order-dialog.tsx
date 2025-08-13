@@ -2,6 +2,7 @@
 
 import { getOrderDetailsAction } from "@/app/_actions/get-order-details"
 import { updateOrderAction } from "@/app/_actions/update-order"
+import { closeOrderAction } from "@/app/_actions/close-order"
 import { getProductsAction } from "@/app/_actions/get-products"
 import { getFormattedCurrency } from "@/app/_helpers/format-currency"
 import {
@@ -158,14 +159,14 @@ const EditOrderDialog = ({
     }
     setLoading(true)
     try {
-      await updateOrderAction({
+      await closeOrderAction({
         orderId,
         items: orderItems.map((i) => ({
           productId: i.productId,
           quantity: i.quantity,
           price: i.price,
         })),
-        paymentMethod,
+        paymentMethod: paymentMethod!,
         discountValue: discount,
       })
       onOpenChange(false)

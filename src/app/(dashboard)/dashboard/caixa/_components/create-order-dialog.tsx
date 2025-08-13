@@ -33,6 +33,7 @@ import { Separator } from "@/components/ui/separator"
 import { getFormattedCurrency } from "@/app/_helpers/format-currency"
 import { getProductsAction } from "@/app/_actions/get-products"
 import { createOrderAction } from "@/app/_actions/create-order"
+import { createAndCloseOrderAction } from "@/app/_actions/create-and-close-order"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -56,6 +57,7 @@ type FormData = z.infer<typeof formSchema>
 const CreateOrderDialog = ({ clients }: { clients: ClientOption[] }) => {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
+  const [isSubmittingClose, setIsSubmittingClose] = useState(false)
   const closeRef = useRef<HTMLButtonElement | null>(null)
 
   const form = useForm<FormData>({
@@ -135,6 +137,28 @@ const CreateOrderDialog = ({ clients }: { clients: ClientOption[] }) => {
       toast.error("Não foi possível criar a comanda")
     }
   }
+
+  const onSubmitAndClose = form.handleSubmit(async (data) => {
+    if (!data.paymentMethod) {
+      toast.error("Selecione o método de pagamento para fechar a comanda")
+      return
+    }
+    setIsSubmittingClose(true)
+    try {
+      await createAndCloseOrderAction({
+        userId: data.userId,
+        items: data.items,
+        paymentMethod: data.paymentMethod,
+      })
+      toast.success("Comanda criada e fechada com sucesso")
+      closeRef.current?.click()
+      router.refresh()
+    } catch (e) {
+      toast.error("Não foi possível criar e fechar a comanda")
+    } finally {
+      setIsSubmittingClose(false)
+    }
+  })
 
   return (
     <DialogContent
@@ -291,6 +315,13 @@ const CreateOrderDialog = ({ clients }: { clients: ClientOption[] }) => {
               </Button>
             </DialogClose>
             <div className="flex gap-2">
+              <Button
+                type="button"
+                onClick={onSubmitAndClose}
+                disabled={isSubmittingClose || !form.watch("paymentMethod")}
+              >
+                Salvar e fechar comanda
+              </Button>
               <Button type="submit">Salvar comanda</Button>
             </div>
           </DialogFooter>
