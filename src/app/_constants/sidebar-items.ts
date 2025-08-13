@@ -29,23 +29,10 @@ const quickSideBarMainMenuItem: QuickSideBarMenuItems[] = [
     icon: Calendar,
     url: "/dashboard/agenda",
   },
-]
-
-const quickSideBarCashierMenuItem: QuickSideBarMenuItems[] = [
   {
-    title: "Novo Atendimento",
-    url: "/dashboard/caixa/novo",
-    icon: Scissors,
-  },
-  {
-    title: "Vendas do Dia",
-    url: "/dashboard/caixa/vendas",
+    title: "Caixa",
     icon: DollarSign,
-  },
-  {
-    title: "Histórico",
-    url: "/dashboard/caixa/historico",
-    icon: Clock,
+    url: "/dashboard/caixa",
   },
 ]
 
@@ -82,7 +69,6 @@ const quickSideBarEmployeeMenuItem: QuickSideBarMenuItems[] = [
 
 const sidebarItems = {
   quickSideBarMainMenuItem,
-  quickSideBarCashierMenuItem,
   quickSideBarStockMenuItem,
   quickSideBarEmployeeMenuItem,
 }
