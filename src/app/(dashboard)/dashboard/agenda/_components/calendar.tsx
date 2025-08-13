@@ -6,9 +6,11 @@ import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import CalendarAppointmentDialog from "./calendar-appointment-card"
 import CalendarAppointmentForm from "./calendar-appointment-form"
+import { getData } from "@/lib/queries"
 
 const Calendar = async () => {
-  const barbers = await db.barber.findMany({})
+  const barbers = (await getData()).barbers
+  const clients = (await getData()).clients
   const appointments = await db.appointment.findMany({
     include: {
       services: {
@@ -24,12 +26,7 @@ const Calendar = async () => {
       },
     },
   })
-  const services = await db.service.findMany({})
-  const clients = await db.user.findMany({
-    where: {
-      employee: null,
-    },
-  })
+  const services = (await getData()).services
 
   const generateTimeSlots = () => {
     const slots = []
