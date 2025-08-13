@@ -7,14 +7,20 @@ import { Dialog } from "@/components/ui/dialog"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import CreateOrderDialog from "./_components/create-order-dialog"
 import { getData } from "@/lib/queries"
+import { Card, CardHeader } from "@/components/ui/card"
 
 const CheckoutPage = async () => {
   const orders = await getOrdersWithUser()
-  const clients = await (await getData()).clients
+  const clients = (await getData()).clients
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Gestão de comandas</h2>
+    <Card className="space-y-4 p-6">
+      <CardHeader className="flex flex-row items-center justify-between p-0">
+        <div className="space-y-2">
+          <span className="text-sm font-semibold text-muted-foreground">
+            Caixa
+          </span>
+          <h2 className="text-xl font-semibold">Gestão de comandas</h2>
+        </div>
         <Dialog>
           <DialogTrigger asChild>
             <Button className="gap-2">
@@ -24,9 +30,9 @@ const CheckoutPage = async () => {
           </DialogTrigger>
           <CreateOrderDialog clients={clients} />
         </Dialog>
-      </div>
+      </CardHeader>
       <DataTable columns={columns} data={orders} />
-    </div>
+    </Card>
   )
 }
 

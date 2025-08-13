@@ -39,17 +39,17 @@ const quickSideBarMainMenuItem: QuickSideBarMenuItems[] = [
 const quickSideBarStockMenuItem: QuickSideBarMenuItems[] = [
   {
     title: "Produtos",
-    url: "/dashboard/estoque/produtos",
+    url: "/dashboard/produtos",
     icon: Package,
   },
   {
     title: "Entrada/Saída",
-    url: "/dashboard/estoque/movimentacao",
+    url: "/dashboard/movimentacao",
     icon: Package2,
   },
   {
     title: "Relatórios",
-    url: "/dashboard/estoque/relatorios",
+    url: "/dashboard/relatorios",
     icon: BarChart3,
   },
 ]
