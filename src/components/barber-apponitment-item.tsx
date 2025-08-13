@@ -23,6 +23,7 @@ import {
 } from "./ui/dialog"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { formatDateInSaoPaulo, formatTimeInSaoPaulo } from "@/lib/timezone"
 import { useState } from "react"
 import { Appointment, Service, User } from "@prisma/client"
 import { Label } from "./ui/label"
@@ -78,9 +79,7 @@ const BarberAppointmentItem = ({
     }
   }
 
-  const formatTime = (date: Date) => {
-    return format(date, "HH:mm", { locale: ptBR })
-  }
+  const formatTime = (date: Date) => formatTimeInSaoPaulo(date)
 
   const userName = users.find((user) => user.id === appointment.userId)?.name
 
@@ -119,11 +118,7 @@ const BarberAppointmentItem = ({
                   {isFuture && (
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-primary" />
-                      <span>
-                        {format(appointment.date, "dd/MM/yyyy", {
-                          locale: ptBR,
-                        })}
-                      </span>
+                      <span>{formatDateInSaoPaulo(appointment.date)}</span>
                     </div>
                   )}
                 </div>

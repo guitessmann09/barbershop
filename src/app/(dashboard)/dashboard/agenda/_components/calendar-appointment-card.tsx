@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { formatDateInSaoPaulo, formatTimeInSaoPaulo } from "@/lib/timezone"
 import { StarIcon } from "lucide-react"
 import { Appointment, Barber, Service } from "@prisma/client"
 import { useState } from "react"
@@ -60,18 +61,17 @@ const CalendarAppointmentDialog = (
                   .join(", ")}
               </div>
               <div className="mt-1 truncate text-xs leading-tight text-muted-foreground">
-                {format(appointmentByBarber.date, "HH:mm", { locale: ptBR })} -{" "}
-                {format(
-                  addMinutes(
-                    appointmentByBarber.date,
-                    appointmentByBarber.services.reduce(
-                      (sum: number, s: { service: Service }) =>
-                        sum + s.service.durationMinutes,
-                      0,
-                    ),
-                  ),
-                  "HH:mm",
-                )}
+                {formatTimeInSaoPaulo(appointmentByBarber.date)} -{" "}
+                {(() => {
+                  const start = appointmentByBarber.date
+                  const total = appointmentByBarber.services.reduce(
+                    (sum: number, s: { service: Service }) =>
+                      sum + s.service.durationMinutes,
+                    0,
+                  )
+                  const end = addMinutes(start, total)
+                  return formatTimeInSaoPaulo(end)
+                })()}
               </div>
             </div>
             <div className="mt-1 flex-shrink-0">
