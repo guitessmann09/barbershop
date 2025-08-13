@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { getData } from "@/lib/queries"
 import { format, subDays } from "date-fns"
 import {
   Calendar,
@@ -21,6 +22,7 @@ import {
 
 const Dashboard = async () => {
   const orders = await getOrders()
+  const employees = (await getData()).users.filter((user) => user.employee)
   const today = new Date()
   const yesterday = subDays(today, 1)
 
@@ -51,13 +53,16 @@ const Dashboard = async () => {
       ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100
       : 0
 
-  const todayAttendance = todayOrders.length
-  const yesterdayAttendance = yesterdayOrders.length
+  const todayAttendance = todayOrders.filter(
+    (order) => order.appointmentId,
+  ).length
+  const yesterdayAttendance = yesterdayOrders.filter(
+    (order) => order.appointmentId,
+  ).length
   const attendanceChange =
     yesterdayAttendance > 0
       ? ((todayAttendance - yesterdayAttendance) / yesterdayAttendance) * 100
       : 0
-
   return (
     <div className="space-y-4">
       <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -105,8 +110,10 @@ const Dashboard = async () => {
             <UsersIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
-            <p className="text-xs text-muted-foreground">6 trabalhando agora</p>
+            <div className="text-2xl font-bold">{employees.length}</div>
+            <p className="text-xs text-muted-foreground">
+              {employees.length} trabalhando agora
+            </p>
           </CardContent>
         </Card>
 
