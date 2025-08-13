@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckSquare, Edit, MoreHorizontal, Trash2Icon } from "lucide-react"
+import { Eye, MoreHorizontal, Trash2Icon } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -20,7 +20,15 @@ import { toast } from "sonner"
 const OrderTableDropdownMenu = ({ orderId }: { orderId: number }) => {
   const [editDialogIsOpen, setEditDialogIsOpen] = useState(false)
   const router = useRouter()
-
+  const handleDeleteButton = async () => {
+    try {
+      await deleteOrderAction(orderId)
+      toast.success("Comanda cancelada")
+      router.refresh()
+    } catch (error: any) {
+      toast.error(`Erro ao cancelar comanda: ${error.message}`)
+    }
+  }
   return (
     <>
       <DropdownMenu>
@@ -32,29 +40,17 @@ const OrderTableDropdownMenu = ({ orderId }: { orderId: number }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-muted">
           <DropdownMenuLabel>Opções</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <CheckSquare />
-            Fechar comanda
-          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               setEditDialogIsOpen(true)
             }}
           >
-            <Edit /> Editar comanda
+            <Eye /> Visualizar comanda
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="bg-destructive"
-            onClick={async () => {
-              try {
-                await deleteOrderAction(orderId)
-                toast.success("Comanda cancelada")
-                router.refresh()
-              } catch (e: any) {
-                toast.error(`Erro ao cancelar comanda: ${e.message}`)
-              }
-            }}
+            onClick={handleDeleteButton}
           >
             <Trash2Icon /> Cancelar comanda
           </DropdownMenuItem>
