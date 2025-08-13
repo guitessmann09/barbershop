@@ -1,3 +1,4 @@
+import { getOrders } from "@/app/_data-access/get-orders"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -7,8 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/prisma"
+import { format, subDays } from "date-fns"
 import {
   Calendar,
   Clock,
@@ -18,13 +18,45 @@ import {
   Star,
   UsersIcon,
 } from "lucide-react"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 
 const Dashboard = async () => {
-  const session = await auth.api.getSession({
-    headers: headers(),
+  const orders = await getOrders()
+  const today = new Date()
+  const yesterday = subDays(today, 1)
+
+  const todayOrders = orders.filter((order) => {
+    return (
+      format(new Date(order.createdAt), "dd/MM/yyyy") ===
+        format(today, "dd/MM/yyyy") && order.status === "paid"
+    )
   })
+
+  const yesterdayOrders = orders.filter((order) => {
+    return (
+      format(new Date(order.createdAt), "dd/MM/yyyy") ===
+        format(yesterday, "dd/MM/yyyy") && order.status === "paid"
+    )
+  })
+
+  const todayRevenue = todayOrders.reduce(
+    (acc, order) => acc + Number(order.total),
+    0,
+  )
+  const yesterdayRevenue = yesterdayOrders.reduce(
+    (acc, order) => acc + Number(order.total),
+    0,
+  )
+  const revenueChange =
+    yesterdayRevenue > 0
+      ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100
+      : 0
+
+  const todayAttendance = todayOrders.length
+  const yesterdayAttendance = yesterdayOrders.length
+  const attendanceChange =
+    yesterdayAttendance > 0
+      ? ((todayAttendance - yesterdayAttendance) / yesterdayAttendance) * 100
+      : 0
 
   return (
     <div className="space-y-4">
@@ -37,9 +69,15 @@ const Dashboard = async () => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ 1.234,50</div>
+            <div className="text-2xl font-bold">
+              {todayRevenue.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </div>
             <p className="text-xs text-muted-foreground">
-              +20.1% em relação a ontem
+              {revenueChange > 0 ? "+" : ""}
+              {revenueChange.toFixed(1)}% em relação a ontem
             </p>
           </CardContent>
         </Card>
@@ -51,9 +89,10 @@ const Dashboard = async () => {
             <Scissors className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">23</div>
+            <div className="text-2xl font-bold">{todayAttendance}</div>
             <p className="text-xs text-muted-foreground">
-              +15% em relação a ontem
+              {attendanceChange > 0 ? "+" : ""}
+              {attendanceChange.toFixed(1)}% em relação a ontem
             </p>
           </CardContent>
         </Card>
