@@ -9,5 +9,11 @@ export async function getProductsAction() {
   if (!session) {
     throw new Error("Unauthorized")
   }
-  return db.product.findMany({ orderBy: { name: "asc" } })
+  return db.product.findMany({
+    where: {
+      isActive: true,
+      quantityInStock: { gt: 0 },
+    },
+    orderBy: { name: "asc" },
+  })
 }
