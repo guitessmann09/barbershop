@@ -10,8 +10,10 @@ import { getData } from "@/lib/queries"
 import { Card, CardHeader } from "@/components/ui/card"
 
 const CheckoutPage = async () => {
-  const orders = await getOrdersWithUser()
-  const clients = (await getData()).clients
+  const [orders, { clients }] = await Promise.all([
+    getOrdersWithUser(),
+    getData(),
+  ])
   return (
     <Card className="space-y-4 p-6">
       <CardHeader className="flex flex-row items-center justify-between p-0">
