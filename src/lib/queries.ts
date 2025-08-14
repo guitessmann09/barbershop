@@ -7,15 +7,16 @@ export const getData = async () => {
     await Promise.all([
       db.service.findMany(),
       db.barber.findMany({
-        select: {
-          id: true,
-          name: true,
-          imageUrl: true,
-          employeeId: true,
-          createdAt: true,
-          updatedAt: true,
+        include: {
           appointments: {
-            select: { date: true },
+            include: {
+              services: {
+                include: {
+                  service: true,
+                },
+              },
+              user: true,
+            },
           },
         },
       }),
