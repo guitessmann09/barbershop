@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Trash2Icon } from "lucide-react"
+import { NumericFormat } from "react-number-format"
 
 const EditOrderDialog = ({
   isOpen,
@@ -293,14 +294,16 @@ const EditOrderDialog = ({
             </div>
             <div className="space-y-1">
               <p className="text-sm font-semibold">Desconto (R$)</p>
-              <Input
-                type="number"
-                min={0}
-                step="0.01"
-                value={discount}
-                onChange={(e) =>
-                  setDiscount(Math.max(0, Number(e.target.value)))
-                }
+              <NumericFormat
+                thousandSeparator="."
+                decimalSeparator=","
+                fixedDecimalScale
+                decimalScale={2}
+                prefix="R$ "
+                allowNegative={false}
+                customInput={Input}
+                onValueChange={(e) => setDiscount(Math.max(0, Number(e.value)))}
+                onChange={() => {}}
               />
             </div>
             <div className="space-y-1">
