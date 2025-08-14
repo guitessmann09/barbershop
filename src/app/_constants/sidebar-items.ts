@@ -42,16 +42,6 @@ const quickSideBarStockMenuItem: QuickSideBarMenuItems[] = [
     url: "/dashboard/produtos",
     icon: Package,
   },
-  {
-    title: "Entrada/Saída",
-    url: "/dashboard/movimentacao",
-    icon: Package2,
-  },
-  {
-    title: "Relatórios",
-    url: "/dashboard/relatorios",
-    icon: BarChart3,
-  },
 ]
 
 const quickSideBarEmployeeMenuItem: QuickSideBarMenuItems[] = [
@@ -59,11 +49,6 @@ const quickSideBarEmployeeMenuItem: QuickSideBarMenuItems[] = [
     title: "Funcionários",
     url: "/dashboard/funcionarios",
     icon: Users,
-  },
-  {
-    title: "Comissões",
-    url: "/dashboard/funcionarios/comissoes",
-    icon: CreditCard,
   },
 ]
 
