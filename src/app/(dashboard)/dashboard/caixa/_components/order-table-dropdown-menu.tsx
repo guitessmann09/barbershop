@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import EditOrderDialog from "./edit-order-dialog"
+import UpdateOrderDialog from "./update-order-dialog"
 import { deleteOrderAction } from "@/app/_actions/delete-order"
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
@@ -56,7 +56,7 @@ const OrderTableDropdownMenu = ({ orderId }: { orderId: number }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <EditOrderDialog
+      <UpdateOrderDialog
         isOpen={editDialogIsOpen}
         onOpenChange={setEditDialogIsOpen}
         orderId={orderId}

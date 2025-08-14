@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useState, useEffect } from "react"
-import { Service } from "@prisma/client"
+import { Product, Service } from "@prisma/client"
 import {
   DialogDescription,
   DialogHeader,
@@ -40,8 +40,12 @@ import { deleteAppointment } from "@/app/_actions/delete-appointments"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { isBarberAvailable } from "@/app/_actions/is-barber-available"
+import { getOrderDetailsAction } from "@/app/_actions/get-order-details"
+import { getProductsAction } from "@/app/_actions/get-products"
+import { updateOrderAction } from "@/app/_actions/update-order"
+import { getFormattedCurrency } from "@/app/_helpers/format-currency"
 
-interface EditAppointmentProps {
+interface UpdateAppointmentFormProps {
   appointmentByBarber: AppointmentWithServicesAndUser
   onClose?: () => void
 }
@@ -62,12 +66,20 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-const EditAppointmentForm = ({
+const UpdateAppointmentForm = ({
   appointmentByBarber,
   onClose,
-}: EditAppointmentProps) => {
+}: UpdateAppointmentFormProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const [orderItems, setOrderItems] = useState<
+    Array<{ productId: string; name: string; price: number; quantity: number }>
+  >([])
+  const [initialOrderItems, setInitialOrderItems] = useState<
+    Array<{ productId: string; name: string; price: number; quantity: number }>
+  >([])
   const router = useRouter()
 
   const form = useForm<FormData>({
@@ -80,6 +92,65 @@ const EditAppointmentForm = ({
       total: Number(appointmentByBarber.total),
     },
   })
+
+  // Carrega produtos disponíveis e itens da comanda do agendamento
+  useEffect(() => {
+    ;(async () => {
+      setIsLoadingProducts(true)
+      try {
+        const [order, prods] = await Promise.all([
+          getOrderDetailsAction(appointmentByBarber.orderId),
+          getProductsAction(),
+        ])
+        const mappedItems = (order.items || []).map((it) => ({
+          productId: it.productId,
+          name: it.product.name,
+          price: Number(it.price),
+          quantity: it.quantity,
+        }))
+        setOrderItems(mappedItems)
+        setInitialOrderItems(mappedItems)
+        setProducts(prods)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setIsLoadingProducts(false)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appointmentByBarber.orderId])
+
+  const addProduct = (productId: string) => {
+    const product = products.find((p) => p.id === productId)
+    if (!product) return
+    setOrderItems((prev) => {
+      const existing = prev.find((i) => i.productId === productId)
+      if (existing) {
+        return prev.map((i) =>
+          i.productId === productId ? { ...i, quantity: i.quantity + 1 } : i,
+        )
+      }
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          name: product.name,
+          price: Number(product.price),
+          quantity: 1,
+        },
+      ]
+    })
+  }
+
+  const removeProduct = (productId: string) => {
+    setOrderItems((prev) => prev.filter((i) => i.productId !== productId))
+  }
+
+  const updateQuantity = (productId: string, quantity: number) => {
+    setOrderItems((prev) =>
+      prev.map((i) => (i.productId === productId ? { ...i, quantity } : i)),
+    )
+  }
 
   // Sincroniza o formulário quando o modo de edição muda
   useEffect(() => {
@@ -143,6 +214,18 @@ const EditAppointmentForm = ({
         barberId: data.barberId,
       })
 
+      // Atualiza itens da comanda associados ao agendamento
+      await updateOrderAction({
+        orderId: appointmentByBarber.orderId,
+        items: orderItems.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          price: i.price,
+        })),
+        paymentMethod: null,
+        discountValue: 0,
+      })
+
       toast.success("Agendamento atualizado com sucesso!")
       setIsEditing(false)
       router.refresh()
@@ -157,6 +240,7 @@ const EditAppointmentForm = ({
 
   const handleCancel = () => {
     form.reset()
+    setOrderItems(initialOrderItems)
     setIsEditing(false)
   }
 
@@ -334,8 +418,75 @@ const EditAppointmentForm = ({
               <Label className="text-sm font-medium">Produtos</Label>
             </div>
             <div className="space-y-2">
-              <div className="rounded-lg border border-dashed p-4 text-center text-muted-foreground">
-                Nenhum produto adicionado
+              {isEditing && (
+                <Select onValueChange={addProduct}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue
+                      placeholder={
+                        isLoadingProducts
+                          ? "Carregando produtos..."
+                          : "Adicionar produto"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="bg-muted">
+                    {products.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name} — {getFormattedCurrency(Number(p.price))}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              <div className="space-y-2">
+                {orderItems.length === 0 ? (
+                  <div className="rounded-lg border border-dashed p-4 text-center text-muted-foreground">
+                    Nenhum produto adicionado
+                  </div>
+                ) : (
+                  orderItems.map((it) => (
+                    <div key={it.productId} className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{it.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {getFormattedCurrency(it.price)}
+                        </p>
+                      </div>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          min={1}
+                          value={it.quantity}
+                          onChange={(e) =>
+                            updateQuantity(
+                              it.productId,
+                              Math.max(1, Number(e.target.value)),
+                            )
+                          }
+                          className="w-20"
+                        />
+                      ) : (
+                        <div className="w-20 text-center text-sm">
+                          x{it.quantity}
+                        </div>
+                      )}
+                      {isEditing && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="hover:none text-destructive"
+                          onClick={() => removeProduct(it.productId)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <div className="w-24 text-right text-sm font-medium">
+                        {getFormattedCurrency(it.price * it.quantity)}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -428,4 +579,4 @@ const EditAppointmentForm = ({
   )
 }
 
-export default EditAppointmentForm
+export default UpdateAppointmentForm

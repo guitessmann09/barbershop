@@ -30,7 +30,7 @@ import {
 import { Trash2Icon } from "lucide-react"
 import { NumericFormat } from "react-number-format"
 
-const EditOrderDialog = ({
+const UpdateOrderDialog = ({
   isOpen,
   onOpenChange,
   orderId,
@@ -365,4 +365,4 @@ const EditOrderDialog = ({
   )
 }
 
-export default EditOrderDialog
+export default UpdateOrderDialog

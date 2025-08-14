@@ -1,13 +1,12 @@
 "use client"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { addMinutes, format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { formatDateInSaoPaulo, formatTimeInSaoPaulo } from "@/lib/timezone"
+import { addMinutes } from "date-fns"
+import { formatTimeInSaoPaulo } from "@/lib/timezone"
 import { StarIcon } from "lucide-react"
 import { Appointment, Barber, Service } from "@prisma/client"
 import { useState } from "react"
-import EditAppointmentForm from "./edit-appointment-form"
+import UpdateAppointmentForm from "./update-appointment-form"
 
 export type AppointmentWithServicesAndUser = Appointment & {
   services: {
@@ -91,7 +90,7 @@ const CalendarAppointmentDialog = (
         </div>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <EditAppointmentForm
+        <UpdateAppointmentForm
           appointmentByBarber={appointmentByBarber}
           onClose={() => setIsOpen(false)}
         />
