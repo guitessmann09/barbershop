@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { formatDateInSaoPaulo, formatTimeInSaoPaulo } from "@/lib/timezone"
 import Image from "next/image"
 
 interface AppointmentItemProps {
@@ -149,9 +150,7 @@ const AppointmentItem = ({
             {format(appointment.date, "MMMM", { locale: ptBR })}
           </p>
           <p className="text-2xl">{appointment.date.getDate()}</p>
-          <p className="text-sm">
-            {format(appointment.date, "HH:mm", { locale: ptBR })}
-          </p>
+          <p className="text-sm">{formatTimeInSaoPaulo(appointment.date)}</p>
         </div>
       </CardContent>
     </Card>

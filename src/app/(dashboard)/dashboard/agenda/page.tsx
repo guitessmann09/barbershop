@@ -1,6 +1,6 @@
-import Calendar from "../_components/calendar"
+import Calendar from "./_components/calendar"
 
-const AgendaPage = async () => {
+const AgendaPage = () => {
   return (
     <div className="h-[calc(100vh-8rem)]">
       <Calendar></Calendar>

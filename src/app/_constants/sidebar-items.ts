@@ -29,40 +29,27 @@ const quickSideBarMainMenuItem: QuickSideBarMenuItems[] = [
     icon: Calendar,
     url: "/dashboard/agenda",
   },
-]
-
-const quickSideBarCashierMenuItem: QuickSideBarMenuItems[] = [
   {
-    title: "Novo Atendimento",
-    url: "/dashboard/caixa/novo",
-    icon: Scissors,
-  },
-  {
-    title: "Vendas do Dia",
-    url: "/dashboard/caixa/vendas",
+    title: "Caixa",
     icon: DollarSign,
-  },
-  {
-    title: "Histórico",
-    url: "/dashboard/caixa/historico",
-    icon: Clock,
+    url: "/dashboard/caixa",
   },
 ]
 
 const quickSideBarStockMenuItem: QuickSideBarMenuItems[] = [
   {
     title: "Produtos",
-    url: "/dashboard/estoque/produtos",
+    url: "/dashboard/produtos",
     icon: Package,
   },
   {
     title: "Entrada/Saída",
-    url: "/dashboard/estoque/movimentacao",
+    url: "/dashboard/movimentacao",
     icon: Package2,
   },
   {
     title: "Relatórios",
-    url: "/dashboard/estoque/relatorios",
+    url: "/dashboard/relatorios",
     icon: BarChart3,
   },
 ]
@@ -82,7 +69,6 @@ const quickSideBarEmployeeMenuItem: QuickSideBarMenuItems[] = [
 
 const sidebarItems = {
   quickSideBarMainMenuItem,
-  quickSideBarCashierMenuItem,
   quickSideBarStockMenuItem,
   quickSideBarEmployeeMenuItem,
 }

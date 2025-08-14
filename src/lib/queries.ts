@@ -26,21 +26,26 @@ export const getData = async () => {
               service: true,
             },
           },
+          user: true,
         },
       }),
-      db.user.findMany(),
+      db.user.findMany({
+        include: { employee: true },
+      }),
       db.subscription.findMany({
         include: {
           benefits: true,
         },
       }),
     ])
-
-  // Mapeia appointments para que cada services seja um array de objetos completos do serviço
   const appointmentsWithServices = appointments.map((a) => ({
     ...a,
     services: a.services.map((s) => s.service),
   }))
+
+  const clients = users.filter((user) => {
+    return user.employee === null
+  })
 
   return {
     services,
@@ -48,5 +53,6 @@ export const getData = async () => {
     appointments: appointmentsWithServices,
     users,
     subscriptions,
+    clients,
   }
 }

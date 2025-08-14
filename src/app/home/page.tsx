@@ -16,7 +16,6 @@ const Home = async () => {
     headers: headers(),
   })
 
-  const user = session?.session ? await getUserData(session.session) : undefined
   const { services, barbers, appointments } = await getData()
 
   const confirmedAppointments = await getConfirmedAppointments(appointments)

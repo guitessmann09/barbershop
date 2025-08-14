@@ -6,9 +6,12 @@ import { addMinutes, format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import CalendarAppointmentDialog from "./calendar-appointment-card"
 import CalendarAppointmentForm from "./calendar-appointment-form"
+import { getData } from "@/lib/queries"
+import { formatDateInSaoPaulo, formatTimeInSaoPaulo } from "@/lib/timezone"
 
 const Calendar = async () => {
-  const barbers = await db.barber.findMany({})
+  const barbers = (await getData()).barbers
+  const clients = (await getData()).clients
   const appointments = await db.appointment.findMany({
     include: {
       services: {
@@ -24,12 +27,7 @@ const Calendar = async () => {
       },
     },
   })
-  const services = await db.service.findMany({})
-  const clients = await db.user.findMany({
-    where: {
-      employee: null,
-    },
-  })
+  const services = (await getData()).services
 
   const generateTimeSlots = () => {
     const slots = []
@@ -47,9 +45,9 @@ const Calendar = async () => {
     return appointments.find(
       (appointment) =>
         appointment.barberId === barberId &&
-        format(appointment.date, "HH:mm", { locale: ptBR }) === time &&
-        format(appointment.date, "dd/MM/yyyy", { locale: ptBR }) ===
-          format(new Date(), "dd/MM/yyyy", { locale: ptBR }),
+        formatTimeInSaoPaulo(appointment.date) === time &&
+        formatDateInSaoPaulo(appointment.date) ===
+          formatDateInSaoPaulo(new Date()),
     )
   }
 
@@ -57,26 +55,23 @@ const Calendar = async () => {
     return appointments.find((appointment) => {
       if (appointment.barberId !== barberId) return false
 
-      const appointmentTime = format(appointment.date, "HH:mm", {
-        locale: ptBR,
-      })
+      const appointmentTime = formatTimeInSaoPaulo(appointment.date)
       const [hour, minute] = appointmentTime.split(":").map(Number)
-      const appointmentDate = new Date(0, 0, 0, hour, minute)
       const totalDuration = appointment.services.reduce(
         (sum, service) => sum + service.service.durationMinutes,
         0,
       )
-      const appointmentEndTime = format(
-        addMinutes(appointmentDate, totalDuration),
-        "HH:mm",
-        { locale: ptBR },
-      )
+      const startTotalMinutes = hour * 60 + minute
+      const endTotalMinutes = startTotalMinutes + totalDuration
+      const endHour = Math.floor(endTotalMinutes / 60) % 24
+      const endMinute = endTotalMinutes % 60
+      const appointmentEndTime = `${String(endHour).padStart(2, "0")}:${String(endMinute).padStart(2, "0")}`
 
       return (
         time >= appointmentTime &&
         time < appointmentEndTime &&
-        format(appointment.date, "dd/MM/yyyy", { locale: ptBR }) ===
-          format(new Date(), "dd/MM/yyyy", { locale: ptBR })
+        formatDateInSaoPaulo(appointment.date) ===
+          formatDateInSaoPaulo(new Date())
       )
     })
   }

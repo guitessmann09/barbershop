@@ -16,6 +16,8 @@ const nameMap: Record<string, string> = {
   dashboard: "Dashboard",
   funcionarios: "Funcionários",
   agenda: "Agendamentos",
+  caixa: "Caixa",
+  produtos: "Produtos",
   // Adicione outros mapeamentos conforme necessário
 }
 
