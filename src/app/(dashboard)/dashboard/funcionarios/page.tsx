@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { getEmployees } from "@/app/_data-access/get-employees"
+import SignUpUserForm from "./_components/sign-up-user-form"
 
 const EmployeesPage = async () => {
   const employees = await getEmployees()
@@ -32,8 +34,10 @@ const EmployeesPage = async () => {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Teste</DialogTitle>
+              <DialogTitle>Novo funcionário</DialogTitle>
+              <DialogDescription>Isira os dados abaixo</DialogDescription>
             </DialogHeader>
+            <SignUpUserForm />
           </DialogContent>
         </Dialog>
       </CardHeader>

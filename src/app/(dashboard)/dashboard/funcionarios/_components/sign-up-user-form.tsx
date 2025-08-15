@@ -24,6 +24,7 @@ import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { createUser } from "@/app/_actions/create-user"
+import { useRouter } from "next/navigation"
 
 const registerEmployeeFormSchema = z.object({
   email: z.string().email({ message: "Digite um email válido." }),
@@ -45,6 +46,7 @@ const cargos = [
 ]
 
 export default function SignUpUserForm() {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const form = useForm<z.infer<typeof registerEmployeeFormSchema>>({
     resolver: zodResolver(registerEmployeeFormSchema),
@@ -76,6 +78,7 @@ export default function SignUpUserForm() {
       })
       toast.success("Usuário cadastrado com sucesso")
       form.reset()
+      router.refresh()
     }
     if (error) {
       console.error(error)
@@ -89,19 +92,6 @@ export default function SignUpUserForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
@@ -113,6 +103,20 @@ export default function SignUpUserForm() {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="password"
