@@ -40,7 +40,7 @@ BarberShop é uma aplicação moderna e intuitiva para gerenciamento de agendame
 
   - Next.js API Routes
   - Prisma ORM
-  - NextAuth.js
+  - BetterAuth
   - PostgreSQL
   - Stripe (pagamentos e webhooks)
 
